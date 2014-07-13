@@ -37,7 +37,7 @@ par(
   mar = c(3, 6, 5, 0),
   mgp=c(1.5, 0.5, 0)
   )
-# Plot coal source
+# Plot motor vehicle source
 plot <- barplot(
   height = total_emissions_vehicle,
   main = "Total PM2.5 Emissions\nFrom Baltimore City, MD Motor\nVehicle Sources Per Year",

@@ -40,7 +40,7 @@ data$Date_Time       <- paste(as.character(data$Date), data$Time)
 data$Date_Time       <- strptime(data$Date_Time, format = "%Y-%m-%d %H:%M:%S")
 
 
-# plot2 is a plot of Global Active Power as a function of $Time and $Date and save out as PNG named plot2.png
+# plot2 is a plot of Global Active Power as a function of $Date_Time and save out as PNG named plot2.png
 # Convert data$Global_active_power from character to numeric
 data$Global_active_power <- as.numeric(data$Global_active_power)
 # Open PNG device with filename to save out to and set dimensions to 480 x 480 pixels
@@ -49,6 +49,7 @@ png(
   width = 480,
   height = 480
 )
+# Make an empty plot first with no points
 # Some aesthetics include lines only, y axis label, and no x axis label or main title
 plot(  
   x = data$Date_Time,
@@ -57,6 +58,7 @@ plot(
   xlab = "",
   ylab = "Global Active Power (kilowatts)"
 )
+# Fill in with lines instead of points
 lines(
   x = data$Date_Time,
   y = data$Global_active_power,

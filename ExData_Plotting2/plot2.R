@@ -23,9 +23,8 @@ data_summary_pm25           <- readRDS("~/summarySCC_PM25.rds")
 #    Use the base plotting system to make a plot answering this question.
 # Subset out only Baltimore City, MD data.
 data_summary_pm25_baltimore <- data_summary_pm25[data_summary_pm25$fips == "24510",]
-
 # Determine total emissions from all sources for each year
-total_emissions = tapply(X = data_summary_pm25_baltimore$Emissions, INDEX = data_summary_pm25_baltimore$year, FUN = sum)
+total_emissions             <- tapply(X = data_summary_pm25_baltimore$Emissions, INDEX = data_summary_pm25_baltimore$year, FUN = sum)
 # Plot it (need to adjust margins for 480 x 480 pixel output)
 par(
   oma = c(0,0,0,0),

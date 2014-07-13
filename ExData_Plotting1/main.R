@@ -40,39 +40,27 @@
 # plot1
 #########
 
-# Load data directly from online https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip
-library(RCurl)
-file <- CFILE("exdata%2Fdata%2Fhousehold_power_consumption.zip", mode="wb")
-data <- curlPerform(url = "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip", writedata = file@ref)
-close(file)
-str(data)
-
-
-
-library(RCurl)
-filepath <- getURL("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip")
-file <- tempfile()
-con <- file(file, open = "w")
-cat(filepath, file = con) 
-close(con)
-
-
-
-data_path <- "~/Documents/Dropbox/Coursera/Exploratory_Data_Analysis_20140707/CP1/household_power_consumption.txt"
-# There is a header and the delimiter is a semicolon
-data      <- read.table(data_path, header = TRUE, sep = ";", stringsAsFactors = FALSE)
+filepath_source      <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+filename             <- "household_power_consumption"
+filepath_destination <- paste("~/", filename, sep = "") # Destination is home
+# Download the data file from source to local home destination
+download.file(url = filepath_source, destfile = paste(filepath_destination, ".zip", sep = ""), method = "curl")
+# Uncompress zip file information
+data                 <- unz(description = paste(filepath_destination, ".zip", sep = ""), filename = paste(filename, ".txt", sep = ""))
+# Load file, there is a header and the delimiter is a semicolon
+data                 <- read.table(data, header = TRUE, sep = ";", stringsAsFactors = FALSE)
 # We only need data from dates 2007-02-01 and 2007-02-02
-# First convert the $Date column to Date type
-data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
+# Convert the $Date column to Date type
+data$Date            <- as.Date(data$Date, format = "%d/%m/%Y")
 # Get the needed dates
-data      <- data[data$Date == "2007-02-01" | data$Date == "2007-02-02",]
+data                 <- data[data$Date == "2007-02-01" | data$Date == "2007-02-02",]
 
 # plot1 is a histogram of Global Active Power and save out as PNG named plot1.png
 # Convert data$Global_active_power from character to numeric
 data$Global_active_power <- as.numeric(data$Global_active_power)
 # Open PNG device with filename to save out to and set dimensions to 480 x 480 pixels
 png(
-  filename = "~/Documents/Dropbox/Coursera/Exploratory_Data_Analysis_20140707/CP1/plot1.png",
+  filename = "~/github/coursera/ExData_Plotting1/plot1.png",
   width = 480,
   height = 480
   )

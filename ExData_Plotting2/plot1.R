@@ -23,8 +23,12 @@ data_summary_pm25           <- readRDS("~/summarySCC_PM25.rds")
 #    make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.
 # Determine total emissions from all sources for each year
 total_emissions = tapply(X = data_summary_pm25$Emissions, INDEX = data_summary_pm25$year, FUN = sum)
-# Plot it
-par(oma = c(0,0,0,0), mar = c(3, 5, 4, 0), mgp=c(1.5, 0.5, 0))
+# Plot it (need to adjust margins for 480 x 480 pixel output)
+par(
+  oma = c(0,0,0,0), 
+  mar = c(3, 5, 4, 0), 
+  mgp=c(1.5, 0.5, 0)
+  )
 plot <- barplot(
   height = total_emissions,
   main = "Total PM2.5 Emissions\nFrom All Sources Per Year", 
@@ -33,5 +37,11 @@ plot <- barplot(
 )
 text(x = plot, y = 0, labels = round(total_emissions), cex = 1, pos = 3)
 # Save out plot
-dev.print(png, file = "~/plot1.png", width = 480, height = 480)
+dev.print(
+  png, 
+  file = "~/plot1.png", 
+  width = 480, 
+  height = 480
+  )
 dev.off()
+# DONE!

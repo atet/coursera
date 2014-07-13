@@ -30,7 +30,8 @@ total_emissions = tapply(X = data_summary_pm25_baltimore$Emissions, INDEX = data
 par(
   oma = c(0,0,0,0),
   mar = c(3, 6, 5, 0),
-  mgp=c(1.5, 0.5, 0))
+  mgp=c(1.5, 0.5, 0)
+  )
 plot <- barplot(
   height = total_emissions,
   main = "Total PM2.5 Emissions\nFrom All Baltimore City, MD\nSources Per Year", 
@@ -43,6 +44,7 @@ dev.print(
   png,
   file = "~/plot2.png",
   width = 480,
-  height = 480)
+  height = 480
+  )
 dev.off()
 # DONE!

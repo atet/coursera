@@ -28,7 +28,7 @@ scc_vehicle                 <- as.character(scc_vehicle)
 data_summary_pm25_vehicle   <- data_summary_pm25[data_summary_pm25$SCC %in% scc_vehicle,]
 # Further subset to only sources from Baltimore City, MD (fips == "24510")
 data_summary_pm25_vehicle   <- data_summary_pm25_vehicle[data_summary_pm25_vehicle$fips == "24510",]
-# Determine total emissions these coal sources for each year
+# Determine total emissions these motor vehicle sources for each year
 total_emissions_vehicle     <- tapply(X = data_summary_pm25_vehicle$Emissions, INDEX = data_summary_pm25_vehicle$year, FUN = sum)
 # Plot it (need to adjust margins for 480 x 480 pixel output)
 par(

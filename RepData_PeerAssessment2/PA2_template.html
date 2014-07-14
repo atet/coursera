@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>TITLE:</title>
+<title>TITLE HERE</title>
 
 <!-- Styles for R syntax highlighter -->
 <style type="text/css">
@@ -51,152 +51,137 @@ hljs.initHighlightingOnLoad();
 
 
 <style type="text/css">
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote {
-    margin: 0;
-    padding: 0;
-}
-body {
-    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
-    font-size: 13px;
-    line-height: 18px;
-    color: #737373;
-    background-color: white;
-    margin: 10px 13px 10px 13px;
-}
-table {
-	margin: 10px 0 15px 0;
-	border-collapse: collapse;
-}
-td,th {	
-	border: 1px solid #ddd;
-	padding: 3px 10px;
-}
-th {
-	padding: 5px 10px;	
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
 }
 
-a {
-    color: #0069d6;
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
 }
-a:hover {
-    color: #0050a3;
-    text-decoration: none;
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
 }
-a img {
-    border: none;
-}
-p {
-    margin-bottom: 9px;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    color: #404040;
-    line-height: 36px;
-}
+
 h1 {
-    margin-bottom: 18px;
-    font-size: 30px;
+   font-size:2.2em;
 }
+
 h2 {
-    font-size: 24px;
+   font-size:1.8em;
 }
+
 h3 {
-    font-size: 18px;
+   font-size:1.4em;
 }
+
 h4 {
-    font-size: 16px;
+   font-size:1.0em;
 }
+
 h5 {
-    font-size: 14px;
+   font-size:0.9em;
 }
+
 h6 {
-    font-size: 13px;
+   font-size:0.8em;
 }
-hr {
-    margin: 0 0 19px;
-    border: 0;
-    border-bottom: 1px solid #ccc;
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
 }
-blockquote {
-    padding: 13px 13px 21px 15px;
-    margin-bottom: 18px;
-    font-family:georgia,serif;
-    font-style: italic;
+
+pre, img {
+  max-width: 100%;
 }
-blockquote:before {
-    content:"\201C";
-    font-size:40px;
-    margin-left:-10px;
-    font-family:georgia,serif;
-    color:#eee;
-}
-blockquote p {
-    font-size: 14px;
-    font-weight: 300;
-    line-height: 18px;
-    margin-bottom: 0;
-    font-style: italic;
-}
-code, pre {
-    font-family: Monaco, Andale Mono, Courier New, monospace;
-}
-code {
-    background-color: #fee9cc;
-    color: rgba(0, 0, 0, 0.75);
-    padding: 1px 3px;
-    font-size: 12px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-}
-pre {
-    display: block;
-    padding: 14px;
-    margin: 0 0 18px;
-    line-height: 16px;
-    font-size: 11px;
-    border: 1px solid #d9d9d9;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
+
 pre code {
-    background-color: #fff;
-    color:#737373;
-    font-size: 11px;
-    padding: 0;
+   display: block; padding: 0.5em;
 }
-sup {
-    font-size: 0.83em;
-    vertical-align: super;
-    line-height: 0;
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
 }
-* {
-	-webkit-print-color-adjust: exact;
+
+code[class] {
+  background-color: #F8F8F8;
 }
-@media screen and (min-width: 914px) {
-    body {
-        width: 854px;
-        margin:10px auto;
-    }
+
+table, td, th {
+  border: none;
 }
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
 @media print {
-	body,code,pre code,h1,h2,h3,h4,h5,h6 {
-		color: black;
-	}
-	table, pre {
-		page-break-inside: avoid;
-	}
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
 }
 </style>
 
@@ -207,21 +192,23 @@ sup {
 <body>
 <hr/>
 
-<h1>TITLE:</h1>
+<h1>TITLE HERE</h1>
 
 <hr/>
 
-<h2>Synopsis</h2>
+<h2>1. Synopsis</h2>
 
-<p>NULL</p>
+<p>&ldquo;Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.&rdquo;</p>
+
+<p>Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration&#39;s (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), it has been determined that1.) which type(s) of weather events is most harmful with respect to U.S. population health and 2.) which have the greatest economic consequence.</p>
 
 <hr/>
 
-<h2>Data Processing</h2>
+<h2>2. Data Processing</h2>
 
 <p>A GitHub repository was created for this document at: <a href="https://github.com/atet/coursera/tree/master/RepData_PeerAssessment2">https://github.com/atet/coursera/tree/master/RepData_PeerAssessment2</a></p>
 
-<h3>Loading Data</h3>
+<h3>2.A Loading Data</h3>
 
 <ul>
 <li>The original required data file archive <code>repdata-data-StormData.csv.bz2</code> and the prepared compressed <code>repdata-data-StormData.rds</code> is included in the repository</li>
@@ -252,19 +239,384 @@ download.file(url = filepath_source, destfile = paste(filepath_destination, &quo
 data                 &lt;- readRDS(paste(filepath_destination, &quot;.rds&quot;, sep = &quot;&quot;))
 </code></pre>
 
+<ul>
+<li>This large dataset initially contains 902,297 observations with 37 variables each as seen below:</li>
+</ul>
+
+<pre><code class="r">str(data)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    902297 obs. of  37 variables:
+##  $ STATE__   : num  1 1 1 1 1 1 1 1 1 1 ...
+##  $ BGN_DATE  : chr  &quot;4/18/1950 0:00:00&quot; &quot;4/18/1950 0:00:00&quot; &quot;2/20/1951 0:00:00&quot; &quot;6/8/1951 0:00:00&quot; ...
+##  $ BGN_TIME  : chr  &quot;0130&quot; &quot;0145&quot; &quot;1600&quot; &quot;0900&quot; ...
+##  $ TIME_ZONE : chr  &quot;CST&quot; &quot;CST&quot; &quot;CST&quot; &quot;CST&quot; ...
+##  $ COUNTY    : num  97 3 57 89 43 77 9 123 125 57 ...
+##  $ COUNTYNAME: chr  &quot;MOBILE&quot; &quot;BALDWIN&quot; &quot;FAYETTE&quot; &quot;MADISON&quot; ...
+##  $ STATE     : chr  &quot;AL&quot; &quot;AL&quot; &quot;AL&quot; &quot;AL&quot; ...
+##  $ EVTYPE    : chr  &quot;TORNADO&quot; &quot;TORNADO&quot; &quot;TORNADO&quot; &quot;TORNADO&quot; ...
+##  $ BGN_RANGE : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ BGN_AZI   : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ BGN_LOCATI: chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ END_DATE  : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ END_TIME  : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ COUNTY_END: num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ COUNTYENDN: logi  NA NA NA NA NA NA ...
+##  $ END_RANGE : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ END_AZI   : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ END_LOCATI: chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ LENGTH    : num  14 2 0.1 0 0 1.5 1.5 0 3.3 2.3 ...
+##  $ WIDTH     : num  100 150 123 100 150 177 33 33 100 100 ...
+##  $ F         : int  3 2 2 2 2 2 2 1 3 3 ...
+##  $ MAG       : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ FATALITIES: num  0 0 0 0 0 0 0 0 1 0 ...
+##  $ INJURIES  : num  15 0 2 2 2 6 1 0 14 0 ...
+##  $ PROPDMG   : num  25 2.5 25 2.5 2.5 2.5 2.5 2.5 25 25 ...
+##  $ PROPDMGEXP: chr  &quot;K&quot; &quot;K&quot; &quot;K&quot; &quot;K&quot; ...
+##  $ CROPDMG   : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ CROPDMGEXP: chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ WFO       : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ STATEOFFIC: chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ ZONENAMES : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ LATITUDE  : num  3040 3042 3340 3458 3412 ...
+##  $ LONGITUDE : num  8812 8755 8742 8626 8642 ...
+##  $ LATITUDE_E: num  3051 0 0 0 0 ...
+##  $ LONGITUDE_: num  8806 0 0 0 0 ...
+##  $ REMARKS   : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ REFNUM    : num  1 2 3 4 5 6 7 8 9 10 ...
+</code></pre>
+
+<h3>2.B Cleaning Data</h3>
+
+<p><strong>2.B.i Date and time</strong></p>
+
+<ul>
+<li>Entries are from 16 different time zones:</li>
+</ul>
+
+<pre><code class="r">time_zones &lt;- data.frame(
+  &quot;Abbreviation&quot; = c(
+    &quot;SCT&quot;,&quot;GST&quot;,&quot;UTC&quot;,&quot;AST&quot;,&quot;ADT&quot;,&quot;EST&quot;,&quot;EDT&quot;,
+    &quot;CST&quot;,&quot;CDT&quot;,&quot;MST&quot;,&quot;MDT&quot;,&quot;PST&quot;,&quot;PDT&quot;,&quot;HST&quot;,&quot;SST&quot;),
+  &quot;Description&quot; = c(
+    &quot;Seychelles Time&quot;,&quot;Gulf Standard Time&quot;,&quot;Universal Time Coordinated&quot;,
+    &quot;Altantic Standard Time&quot;,&quot;Altantic Daylight Time&quot;,&quot;Eastern Standard Time&quot;,
+    &quot;Eastern Daylight Time&quot;,&quot;Central Standard Time&quot;,&quot;Central Daylight Time&quot;,
+    &quot;Mountain Standard Time&quot;,&quot;Mountain Daylight Time&quot;,&quot;Pacific Standard Time&quot;,
+    &quot;Pacific Daylight Time&quot;,&quot;Hawaii-Aleutian Standard Time&quot;,&quot;Samoa Standard Time&quot;),
+  &quot;UTC Offset&quot; = c(
+    &quot;0400&quot;,&quot;0400&quot;,&quot;0000&quot;,&quot;-0400&quot;,&quot;-0300&quot;,&quot;-0500&quot;,&quot;-0400&quot;,
+    &quot;-0600&quot;,&quot;-0500&quot;,&quot;-0700&quot;,&quot;-0600&quot;,&quot;-0800&quot;,&quot;-0700&quot;,&quot;-1000&quot;,
+    &quot;-1100&quot;)
+  )
+knitr::kable(time_zones)
+</code></pre>
+
+<table><thead>
+<tr>
+<th align="left">Abbreviation</th>
+<th align="left">Description</th>
+<th align="left">UTC.Offset</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">SCT</td>
+<td align="left">Seychelles Time</td>
+<td align="left">0400</td>
+</tr>
+<tr>
+<td align="left">GST</td>
+<td align="left">Gulf Standard Time</td>
+<td align="left">0400</td>
+</tr>
+<tr>
+<td align="left">UTC</td>
+<td align="left">Universal Time Coordinated</td>
+<td align="left">0000</td>
+</tr>
+<tr>
+<td align="left">AST</td>
+<td align="left">Altantic Standard Time</td>
+<td align="left">-0400</td>
+</tr>
+<tr>
+<td align="left">ADT</td>
+<td align="left">Altantic Daylight Time</td>
+<td align="left">-0300</td>
+</tr>
+<tr>
+<td align="left">EST</td>
+<td align="left">Eastern Standard Time</td>
+<td align="left">-0500</td>
+</tr>
+<tr>
+<td align="left">EDT</td>
+<td align="left">Eastern Daylight Time</td>
+<td align="left">-0400</td>
+</tr>
+<tr>
+<td align="left">CST</td>
+<td align="left">Central Standard Time</td>
+<td align="left">-0600</td>
+</tr>
+<tr>
+<td align="left">CDT</td>
+<td align="left">Central Daylight Time</td>
+<td align="left">-0500</td>
+</tr>
+<tr>
+<td align="left">MST</td>
+<td align="left">Mountain Standard Time</td>
+<td align="left">-0700</td>
+</tr>
+<tr>
+<td align="left">MDT</td>
+<td align="left">Mountain Daylight Time</td>
+<td align="left">-0600</td>
+</tr>
+<tr>
+<td align="left">PST</td>
+<td align="left">Pacific Standard Time</td>
+<td align="left">-0800</td>
+</tr>
+<tr>
+<td align="left">PDT</td>
+<td align="left">Pacific Daylight Time</td>
+<td align="left">-0700</td>
+</tr>
+<tr>
+<td align="left">HST</td>
+<td align="left">Hawaii-Aleutian Standard Time</td>
+<td align="left">-1000</td>
+</tr>
+<tr>
+<td align="left">SST</td>
+<td align="left">Samoa Standard Time</td>
+<td align="left">-1100</td>
+</tr>
+</tbody></table>
+
+<ul>
+<li>Create a uniform date/time value in UTC (Universal Time, Coordinated) of <code>POSIX</code> type using the <code>$BGN_DATE</code> and <code>$BGN_TIME</code>:</li>
+</ul>
+
+<pre><code class="r"># Trim $BGN_DATE since the date is correct, but the trailing time are all irrelevant 0:00:00
+data$date &lt;- gsub(&quot; 0:00:00&quot;, &quot;&quot;, data$BGN_DATE)
+# Clean up timezone $TIME_ZONE, some values need to be changed for consistency
+data$TIME_ZONE[data$TIME_ZONE == &quot;CSt&quot;] = &quot;CST&quot; # Typo
+data$TIME_ZONE[data$TIME_ZONE == &quot;CSC&quot;] = &quot;CST&quot; # Typo
+data$TIME_ZONE[data$TIME_ZONE == &quot;ESt&quot;] = &quot;EST&quot; # Typo
+data$TIME_ZONE[data$TIME_ZONE == &quot;ESY&quot;] = &quot;EST&quot; # Typo
+data$TIME_ZONE[data$TIME_ZONE == &quot;GMT&quot;] = &quot;UTC&quot; # Change GMT to UTC
+data$TIME_ZONE[data$TIME_ZONE == &quot;AKS&quot;] = &quot;HST&quot; # Change AKS to HST
+# Nine entries have unknown &quot;UNK&quot; timezones, The appropriate timezone was determined based on their $COUNTYNAME and $STATE
+data[data$TIME_ZONE == &quot;UNK&quot;, c(&quot;date&quot;, &quot;COUNTYNAME&quot;, &quot;STATE&quot;, &quot;TIME_ZONE&quot;)]
+</code></pre>
+
+<pre><code>##             date COUNTYNAME STATE TIME_ZONE
+## 23087  3/31/1973     OCONEE    GA       UNK
+## 27702  3/20/1980     HAWAII    HI       UNK
+## 30669  8/13/1974      COLES    IL       UNK
+## 35244  4/21/1967       RUSH    IN       UNK
+## 67899   6/1/1956    HAMPDEN    MA       UNK
+## 120704  4/2/1957       LOVE    OK       UNK
+## 143198  6/4/1980    PERKINS    SD       UNK
+## 154637 5/13/1972   MCLENNAN    TX       UNK
+## 160236 5/11/1982  ARMSTRONG    TX       UNK
+</code></pre>
+
+<pre><code class="r"># Detrmined the correct time zones and manually added
+data[data$TIME_ZONE == &quot;UNK&quot; &amp; data$COUNTYNAME == &quot;OCONEE&quot;,]$TIME_ZONE = &quot;EDT&quot;
+data[data$TIME_ZONE == &quot;UNK&quot; &amp; data$COUNTYNAME == &quot;HAWAII&quot;,]$TIME_ZONE = &quot;HST&quot;
+data[data$TIME_ZONE == &quot;UNK&quot; &amp; data$COUNTYNAME == &quot;COLES&quot;,]$TIME_ZONE = &quot;CDT&quot;
+data[data$TIME_ZONE == &quot;UNK&quot; &amp; data$COUNTYNAME == &quot;RUSH&quot;,]$TIME_ZONE = &quot;EDT&quot;
+data[data$TIME_ZONE == &quot;UNK&quot; &amp; data$COUNTYNAME == &quot;HAMPDEN&quot;,]$TIME_ZONE = &quot;EDT&quot;
+data[data$TIME_ZONE == &quot;UNK&quot; &amp; data$COUNTYNAME == &quot;LOVE&quot;,]$TIME_ZONE = &quot;CDT&quot;
+data[data$TIME_ZONE == &quot;UNK&quot; &amp; data$COUNTYNAME == &quot;PERKINS&quot;,]$TIME_ZONE = &quot;MDT&quot;
+data[data$TIME_ZONE == &quot;UNK&quot; &amp; data$COUNTYNAME == &quot;MCLENNAN&quot;,]$TIME_ZONE = &quot;CDT&quot;
+data[data$TIME_ZONE == &quot;UNK&quot; &amp; data$COUNTYNAME == &quot;ARMSTRONG&quot;,]$TIME_ZONE = &quot;CDT&quot;
+# Merge data with UTC signed offset time from data frame time_zones
+data &lt;- merge(
+  x = data, y = time_zones[,c(1,3)],
+  by.x = &quot;TIME_ZONE&quot;, by.y = &quot;Abbreviation&quot;)
+# Combine date, time, and UTC offset into a charater vector
+data$datetime &lt;- paste(data$date, data$BGN_TIME, data$UTC.Offset, sep = &quot; &quot;)
+# Since $BGN_TIME is given in 12-hour and 24-hour format, convert everything to 24-hour format in new column $time_24
+time_24h                  &lt;- strptime(data$datetime, format=&quot;%m/%d/%Y %H%M %z&quot;)     # E.g. &quot;8/18/1994 2322 -0300&quot;
+time_12h                  &lt;- strptime(data$datetime, format=&quot;%m/%d/%Y %H:%M:%S %p %z&quot;) # E.g. &quot;8/28/2001 12:00:00 PM -1100&quot;
+time_24h[is.na(time_24h)] &lt;- time_12h[!is.na(time_12h)] # Will produce warning, can ignore
+# Make new column time_utc
+data$time_utc             &lt;- time_24h
+# NOTE: Though there are various additional issues with date and time, there will be no more subsequent cleaning here.
+</code></pre>
+
+<p><strong>2.B.ii Necessary variables</strong></p>
+
+<ul>
+<li>Subset the source data into only columns that relate to weather event, injury/loss-of-life, and economic impact.</li>
+<li>Including the date of the event cleaned up previously as <code>$time_utc</code>, using the documentation provided by the National Weather Service (<a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf">https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf</a>), the following variables relate to weather event, injury/loss-of-life, or economic impact.</li>
+</ul>
+
+<pre><code class="r">variables &lt;- data.frame(
+  &quot;Variable&quot; = c(
+    &quot;time_utc&quot;, &quot;EVTYPE&quot;,&quot;INJURIES&quot;,&quot;FATALITIES&quot;,&quot;PROPDMG&quot;,
+    &quot;PROPDMGEXP&quot;,&quot;CROPDMG&quot;,&quot;CROPDMGEXP&quot;),
+  &quot;Description&quot; = c(
+    &quot;Beginning date and time of event (UTC).&quot;, &quot;Type of event.&quot;, &quot;Reported injuries from event&quot;, 
+    &quot;Reported deaths from event.&quot;, &quot;Damage to property&quot;, &quot;Property damage exponent.&quot;, 
+    &quot;Damage to agricultural crops.&quot;, &quot;Crop damage exponent.&quot;)
+  )
+knitr::kable(time_zones)
+</code></pre>
+
+<table><thead>
+<tr>
+<th align="left">Abbreviation</th>
+<th align="left">Description</th>
+<th align="left">UTC.Offset</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">SCT</td>
+<td align="left">Seychelles Time</td>
+<td align="left">0400</td>
+</tr>
+<tr>
+<td align="left">GST</td>
+<td align="left">Gulf Standard Time</td>
+<td align="left">0400</td>
+</tr>
+<tr>
+<td align="left">UTC</td>
+<td align="left">Universal Time Coordinated</td>
+<td align="left">0000</td>
+</tr>
+<tr>
+<td align="left">AST</td>
+<td align="left">Altantic Standard Time</td>
+<td align="left">-0400</td>
+</tr>
+<tr>
+<td align="left">ADT</td>
+<td align="left">Altantic Daylight Time</td>
+<td align="left">-0300</td>
+</tr>
+<tr>
+<td align="left">EST</td>
+<td align="left">Eastern Standard Time</td>
+<td align="left">-0500</td>
+</tr>
+<tr>
+<td align="left">EDT</td>
+<td align="left">Eastern Daylight Time</td>
+<td align="left">-0400</td>
+</tr>
+<tr>
+<td align="left">CST</td>
+<td align="left">Central Standard Time</td>
+<td align="left">-0600</td>
+</tr>
+<tr>
+<td align="left">CDT</td>
+<td align="left">Central Daylight Time</td>
+<td align="left">-0500</td>
+</tr>
+<tr>
+<td align="left">MST</td>
+<td align="left">Mountain Standard Time</td>
+<td align="left">-0700</td>
+</tr>
+<tr>
+<td align="left">MDT</td>
+<td align="left">Mountain Daylight Time</td>
+<td align="left">-0600</td>
+</tr>
+<tr>
+<td align="left">PST</td>
+<td align="left">Pacific Standard Time</td>
+<td align="left">-0800</td>
+</tr>
+<tr>
+<td align="left">PDT</td>
+<td align="left">Pacific Daylight Time</td>
+<td align="left">-0700</td>
+</tr>
+<tr>
+<td align="left">HST</td>
+<td align="left">Hawaii-Aleutian Standard Time</td>
+<td align="left">-1000</td>
+</tr>
+<tr>
+<td align="left">SST</td>
+<td align="left">Samoa Standard Time</td>
+<td align="left">-1100</td>
+</tr>
+</tbody></table>
+
+<ul>
+<li>Subset the main data into the eight variables appropriate for this analysis.</li>
+</ul>
+
+<pre><code class="r">data &lt;- data[, colnames(data) %in% variables$Variable] 
+</code></pre>
+
+<p><strong>2.B.iii Monetary values</strong></p>
+
+<ul>
+<li>To determine a single monetary value for property and crop damage, <code>$PROPDMG</code>, <code>$PROPDMGEXP</code>, <code>$CROPDMG</code>, and <code>$CROPDMGEXP</code> must be deciphered and combined.</li>
+<li>The <code>$PROPDMG</code> and <code>$CROPDMG</code> values are all numerical, I will assume that the corresponding <code>EXP</code> columns are 10<sup>exponent</sup> multipliers for these values and the value is in U.S dollars.</li>
+<li>Together, <code>$PROPDMGEXP</code> and <code>$CROPDMGEX</code> have 20 unique symbols as multipliers:</li>
+</ul>
+
+<pre><code>##  [1] &quot;&quot;  &quot;K&quot; &quot;M&quot; &quot;B&quot; &quot;+&quot; &quot;0&quot; &quot;m&quot; &quot;5&quot; &quot;6&quot; &quot;?&quot; &quot;1&quot; &quot;3&quot; &quot;4&quot; &quot;2&quot; &quot;7&quot; &quot;H&quot; &quot;8&quot;
+## [18] &quot;h&quot; &quot;-&quot; &quot;k&quot;
+</code></pre>
+
+<ul>
+<li>I will assume the following about the different exponent symbols:</li>
+</ul>
+
+<pre><code class="r"># Symbols that are missing (NA), blank (&quot;&quot;), &quot;+&quot;, &quot;-&quot;, or &quot;?&quot; will be replaced with a zero (10^0 = 1)
+data$PROPDMGEXP[is.na(data$PROPDMGEXP) | data$PROPDMGEXP == &quot;&quot; |
+  data$PROPDMGEXP == &quot;?&quot; | data$PROPDMGEXP == &quot;+&quot; | data$PROPDMGEXP == &quot;-&quot;] &lt;- 0
+data$CROPDMGEXP[is.na(data$CROPDMGEXP) | data$CROPDMGEXP == &quot;&quot; |
+  data$CROPDMGEXP == &quot;?&quot; | data$CROPDMGEXP == &quot;+&quot; | data$CROPDMGEXP == &quot;-&quot;] &lt;- 0
+# Symbols &quot;h&quot; or &quot;H&quot; will be replaced with 2 (H = hundred = 10^2 = 100)
+data$PROPDMGEXP[data$PROPDMGEXP == &quot;h&quot; | data$PROPDMGEXP == &quot;H&quot;] &lt;- 2
+data$CROPDMGEXP[data$CROPDMGEXP == &quot;h&quot; | data$CROPDMGEXP == &quot;H&quot;] &lt;- 2
+# Symbols &quot;k&quot; or &quot;K&quot; will be replaced with 3 (K = kilo = thousand = 10^3 = 1000)
+data$PROPDMGEXP[data$PROPDMGEXP == &quot;k&quot; | data$PROPDMGEXP == &quot;K&quot;] &lt;- 3
+data$CROPDMGEXP[data$CROPDMGEXP == &quot;k&quot; | data$CROPDMGEXP == &quot;K&quot;] &lt;- 3
+# Symbols &quot;m&quot; or &quot;M&quot; will be replaced with 6 (M = mega = million = 10^6 = 1000000)
+data$PROPDMGEXP[data$PROPDMGEXP == &quot;m&quot; | data$PROPDMGEXP == &quot;M&quot;] &lt;- 6
+data$CROPDMGEXP[data$CROPDMGEXP == &quot;m&quot; | data$CROPDMGEXP == &quot;M&quot;] &lt;- 6
+# Symbols &quot;m&quot; or &quot;M&quot; will be replaced with 9 (B = billion = 10^9 = 1000000000)
+data$PROPDMGEXP[data$PROPDMGEXP == &quot;b&quot; | data$PROPDMGEXP == &quot;B&quot;] &lt;- 9
+data$CROPDMGEXP[data$CROPDMGEXP == &quot;b&quot; | data$CROPDMGEXP == &quot;B&quot;] &lt;- 9
+# The remaining symbols are already numberic and assumed correct exponents
+# Make column $total_damage that combines the total property and crop damage
+data$total_damage &lt;- (data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))) + (data$CROPDMG * (10 ^ as.numeric(data$CROPDMGEXP)))
+</code></pre>
+
+<p><strong>2.B.iv Event type</strong></p>
+
+<ul>
+<li>Initially, there are 985 different unique <code>$EVTYPE</code> which describe the weather event. </li>
+</ul>
+
 <hr/>
 
-<h2>Results</h2>
+<h2>3. Results</h2>
 
 <p>NULL</p>
 
 <hr/>
 
-<h2>Discussion</h2>
+<h2>4. Discussion</h2>
 
-<h3>1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</h3>
+<p><strong>1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</strong></p>
 
-<h3>2. Across the United States, which types of events have the greatest economic consequences?</h3>
+<p><strong>2. Across the United States, which types of events have the greatest economic consequences?</strong></p>
 
 <hr/>
 

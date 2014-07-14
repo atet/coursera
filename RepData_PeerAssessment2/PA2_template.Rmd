@@ -7,20 +7,22 @@ output: html_document
 
 ---
 
-# TITLE:
+# TITLE HERE
 
 ---
 
-## Synopsis
+## 1. Synopsis
 
-NULL
+"Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern."
+
+Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), it has been determined that1.) which type(s) of weather events is most harmful with respect to U.S. population health and 2.) which have the greatest economic consequence.
 
 ---
 
-## Data Processing
+## 2. Data Processing
 A GitHub repository was created for this document at: https://github.com/atet/coursera/tree/master/RepData_PeerAssessment2
 
-### Loading Data
+### 2.A Loading Data
   * The original required data file archive `repdata-data-StormData.csv.bz2` and the prepared compressed `repdata-data-StormData.rds` is included in the repository
   * The following code is to convert the original `repdata-data-StormData.csv.bz2` to a compressed R object `repdata-data-StormData.rds`. Since the archive uncompressed is > 100 MB, the following code will download the archive from online, uncompress it locally to home (`~/`), load the local `repdata-data-StormData.csv` file into an R object, and then save it out as `repdata-data-StormData.rds` (which is below the GitHub 100 MB limit):
 ```{r load_bz2, eval=FALSE}
@@ -44,21 +46,134 @@ filepath_destination <- paste("~/", filename, sep = "")
 download.file(url = filepath_source, destfile = paste(filepath_destination, ".rds", sep = ""), method = "curl")
 data                 <- readRDS(paste(filepath_destination, ".rds", sep = ""))
 ```
+ * This large dataset initially contains 902,297 observations with 37 variables each as seen below:
+```{r}
+str(data)
+```
 
+### 2.B Cleaning Data
+**2.B.i Date and time**
+  * Entries are from 16 different time zones:
+```{r, results='asis'}
+time_zones <- data.frame(
+  "Abbreviation" = c(
+    "SCT","GST","UTC","AST","ADT","EST","EDT",
+    "CST","CDT","MST","MDT","PST","PDT","HST","SST"),
+  "Description" = c(
+    "Seychelles Time","Gulf Standard Time","Universal Time Coordinated",
+    "Altantic Standard Time","Altantic Daylight Time","Eastern Standard Time",
+    "Eastern Daylight Time","Central Standard Time","Central Daylight Time",
+    "Mountain Standard Time","Mountain Daylight Time","Pacific Standard Time",
+    "Pacific Daylight Time","Hawaii-Aleutian Standard Time","Samoa Standard Time"),
+  "UTC Offset" = c(
+    "0400","0400","0000","-0400","-0300","-0500","-0400",
+    "-0600","-0500","-0700","-0600","-0800","-0700","-1000",
+    "-1100")
+  )
+knitr::kable(time_zones)
+```
+  * Create a uniform date/time value in UTC (Universal Time, Coordinated) of `POSIX` type using the `$BGN_DATE` and `$BGN_TIME`:
+```{r, warning=FALSE}
+# Trim $BGN_DATE since the date is correct, but the trailing time are all irrelevant 0:00:00
+data$date <- gsub(" 0:00:00", "", data$BGN_DATE)
+# Clean up timezone $TIME_ZONE, some values need to be changed for consistency
+data$TIME_ZONE[data$TIME_ZONE == "CSt"] = "CST" # Typo
+data$TIME_ZONE[data$TIME_ZONE == "CSC"] = "CST" # Typo
+data$TIME_ZONE[data$TIME_ZONE == "ESt"] = "EST" # Typo
+data$TIME_ZONE[data$TIME_ZONE == "ESY"] = "EST" # Typo
+data$TIME_ZONE[data$TIME_ZONE == "GMT"] = "UTC" # Change GMT to UTC
+data$TIME_ZONE[data$TIME_ZONE == "AKS"] = "HST" # Change AKS to HST
+# Nine entries have unknown "UNK" timezones, The appropriate timezone was determined based on their $COUNTYNAME and $STATE
+data[data$TIME_ZONE == "UNK", c("date", "COUNTYNAME", "STATE", "TIME_ZONE")]
+# Detrmined the correct time zones and manually added
+data[data$TIME_ZONE == "UNK" & data$COUNTYNAME == "OCONEE",]$TIME_ZONE = "EDT"
+data[data$TIME_ZONE == "UNK" & data$COUNTYNAME == "HAWAII",]$TIME_ZONE = "HST"
+data[data$TIME_ZONE == "UNK" & data$COUNTYNAME == "COLES",]$TIME_ZONE = "CDT"
+data[data$TIME_ZONE == "UNK" & data$COUNTYNAME == "RUSH",]$TIME_ZONE = "EDT"
+data[data$TIME_ZONE == "UNK" & data$COUNTYNAME == "HAMPDEN",]$TIME_ZONE = "EDT"
+data[data$TIME_ZONE == "UNK" & data$COUNTYNAME == "LOVE",]$TIME_ZONE = "CDT"
+data[data$TIME_ZONE == "UNK" & data$COUNTYNAME == "PERKINS",]$TIME_ZONE = "MDT"
+data[data$TIME_ZONE == "UNK" & data$COUNTYNAME == "MCLENNAN",]$TIME_ZONE = "CDT"
+data[data$TIME_ZONE == "UNK" & data$COUNTYNAME == "ARMSTRONG",]$TIME_ZONE = "CDT"
+# Merge data with UTC signed offset time from data frame time_zones
+data <- merge(
+  x = data, y = time_zones[,c(1,3)],
+  by.x = "TIME_ZONE", by.y = "Abbreviation")
+# Combine date, time, and UTC offset into a charater vector
+data$datetime <- paste(data$date, data$BGN_TIME, data$UTC.Offset, sep = " ")
+# Since $BGN_TIME is given in 12-hour and 24-hour format, convert everything to 24-hour format in new column $time_24
+time_24h                  <- strptime(data$datetime, format="%m/%d/%Y %H%M %z")     # E.g. "8/18/1994 2322 -0300"
+time_12h                  <- strptime(data$datetime, format="%m/%d/%Y %H:%M:%S %p %z") # E.g. "8/28/2001 12:00:00 PM -1100"
+time_24h[is.na(time_24h)] <- time_12h[!is.na(time_12h)] # Will produce warning, can ignore
+# Make new column time_utc
+data$time_utc             <- time_24h
+# NOTE: Though there are various additional issues with date and time, there will be no more subsequent cleaning here.
+```
+**2.B.ii Necessary variables**
+  * Subset the source data into only columns that relate to weather event, injury/loss-of-life, and economic impact.
+  * Including the date of the event cleaned up previously as `$time_utc`, using the documentation provided by the National Weather Service ([https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf)), the following variables relate to weather event, injury/loss-of-life, or economic impact.
+```{r, results='asis'}
+variables <- data.frame(
+  "Variable" = c(
+    "time_utc", "EVTYPE","INJURIES","FATALITIES","PROPDMG",
+    "PROPDMGEXP","CROPDMG","CROPDMGEXP"),
+  "Description" = c(
+    "Beginning date and time of event (UTC).", "Type of event.", "Reported injuries from event", 
+    "Reported deaths from event.", "Damage to property", "Property damage exponent.", 
+    "Damage to agricultural crops.", "Crop damage exponent.")
+  )
+knitr::kable(time_zones)
+``` 
+  * Subset the main data into the eight variables appropriate for this analysis.
+```{r}
+data <- data[, colnames(data) %in% variables$Variable] 
+```
+**2.B.iii Monetary values**
+  * To determine a single monetary value for property and crop damage, `$PROPDMG`, `$PROPDMGEXP`, `$CROPDMG`, and `$CROPDMGEXP` must be deciphered and combined.
+  * The `$PROPDMG` and `$CROPDMG` values are all numerical, I will assume that the corresponding `EXP` columns are 10^exponent multipliers for these values and the value is in U.S dollars.
+  * Together, `$PROPDMGEXP` and `$CROPDMGEX` have 20 unique symbols as multipliers:
+```{r, echo=FALSE}
+print(unique(c(data$PROPDMGEXP, data$CROPDMGEXP)))
+```
+  * I will assume the following about the different exponent symbols:
+```{r}
+# Symbols that are missing (NA), blank (""), "+", "-", or "?" will be replaced with a zero (10^0 = 1)
+data$PROPDMGEXP[is.na(data$PROPDMGEXP) | data$PROPDMGEXP == "" |
+  data$PROPDMGEXP == "?" | data$PROPDMGEXP == "+" | data$PROPDMGEXP == "-"] <- 0
+data$CROPDMGEXP[is.na(data$CROPDMGEXP) | data$CROPDMGEXP == "" |
+  data$CROPDMGEXP == "?" | data$CROPDMGEXP == "+" | data$CROPDMGEXP == "-"] <- 0
+# Symbols "h" or "H" will be replaced with 2 (H = hundred = 10^2 = 100)
+data$PROPDMGEXP[data$PROPDMGEXP == "h" | data$PROPDMGEXP == "H"] <- 2
+data$CROPDMGEXP[data$CROPDMGEXP == "h" | data$CROPDMGEXP == "H"] <- 2
+# Symbols "k" or "K" will be replaced with 3 (K = kilo = thousand = 10^3 = 1000)
+data$PROPDMGEXP[data$PROPDMGEXP == "k" | data$PROPDMGEXP == "K"] <- 3
+data$CROPDMGEXP[data$CROPDMGEXP == "k" | data$CROPDMGEXP == "K"] <- 3
+# Symbols "m" or "M" will be replaced with 6 (M = mega = million = 10^6 = 1000000)
+data$PROPDMGEXP[data$PROPDMGEXP == "m" | data$PROPDMGEXP == "M"] <- 6
+data$CROPDMGEXP[data$CROPDMGEXP == "m" | data$CROPDMGEXP == "M"] <- 6
+# Symbols "m" or "M" will be replaced with 9 (B = billion = 10^9 = 1000000000)
+data$PROPDMGEXP[data$PROPDMGEXP == "b" | data$PROPDMGEXP == "B"] <- 9
+data$CROPDMGEXP[data$CROPDMGEXP == "b" | data$CROPDMGEXP == "B"] <- 9
+# The remaining symbols are already numberic and assumed correct exponents
+# Make column $total_damage that combines the total property and crop damage
+data$total_damage <- (data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))) + (data$CROPDMG * (10 ^ as.numeric(data$CROPDMGEXP)))
+```
+**2.B.iv Event type**
+  * Initially, there are 985 different unique `$EVTYPE` which describe the weather event. 
 
 ---
 
-## Results
+## 3. Results
 
 NULL
 
 ---
 
-## Discussion
+## 4. Discussion
 
-### 1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+**1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?**
 
-### 2. Across the United States, which types of events have the greatest economic consequences?
+**2. Across the United States, which types of events have the greatest economic consequences?**
 
 ---
 ---

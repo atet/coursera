@@ -225,9 +225,10 @@ sup {
 
 <ul>
 <li>The original required data file archive <code>repdata-data-StormData.csv.bz2</code> and the prepared compressed <code>repdata-data-StormData.rds</code> is included in the repository</li>
-<li>The following code is to convert the original <code>repdata-data-StormData.csv.bz2</code> to a compressed R object <code>repdata-data-StormData.rds</code>. Since the archive uncompressed is &gt; 100 MB, the following code will download the archive from online, uncompress it locally to home (<code>~/</code>), load the local <code>repdata-data-StormData.csv</code> file into an R object, and then save it out as <code>repdata-data-StormData.rds</code> (which is below the GitHub 100 MB limit):
-<code>
-setwd(&quot;~/&quot;)
+<li>The following code is to convert the original <code>repdata-data-StormData.csv.bz2</code> to a compressed R object <code>repdata-data-StormData.rds</code>. Since the archive uncompressed is &gt; 100 MB, the following code will download the archive from online, uncompress it locally to home (<code>~/</code>), load the local <code>repdata-data-StormData.csv</code> file into an R object, and then save it out as <code>repdata-data-StormData.rds</code> (which is below the GitHub 100 MB limit):</li>
+</ul>
+
+<pre><code class="r">setwd(&quot;~/&quot;)
 filepath_source      &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2&quot;
 filename             &lt;- &quot;repdata-data-StormData&quot;
 filepath_destination &lt;- paste(&quot;~/&quot;, filename, sep = &quot;&quot;)
@@ -237,7 +238,9 @@ data                 &lt;- read.csv(data, stringsAsFactors = FALSE) # Remember t
 saveRDS(data, &quot;~/repdata-data-StormData.rds&quot;)
 # NOTE: repdata-data-StormData.rds is then uploaded to my GitHub repository
 # We will use this for the remained of the analysis
-</code></li>
+</code></pre>
+
+<ul>
 <li>This following code will now load the compressed <code>repdata-data-StormData.rds</code> from GitHub into R.</li>
 </ul>
 

@@ -19,16 +19,35 @@ NULL
 
 ## Data Processing
   * A GitHub repository was created for this document at: https://github.com/atet/coursera/tree/master/RepData_PeerAssessment2
-  * The required data file `repdata-data-StormData.csv.bz2` is included in the repository.
-  * Since the archive uncompressed is > 100 MB, the following code will download the archive from online, uncompress it locally, and load the local `repdata-data-StormData.csv` file into R:
-```{r}
-local_repos_path <- "~/github/coursera/RepData_PeerAssessment2/" # This filepath may be different for others.
-bzfile(description = paste(local_repos_path, "repdata-data-StormData.csv.bz2", sep = ""), exdir = local_repos_path) 
-data_activity <- read.csv(paste(local_repos_path, "activity.csv", sep = ""))
+  * The original required data file archive `repdata-data-StormData.csv.bz2` and the prepared compressed `repdata-data-StormData.rds` is included in the repository
+  * The following code is to convert the original `repdata-data-StormData.csv.bz2` to a compressed R object `repdata-data-StormData.rds`. Since the archive uncompressed is > 100 MB, the following code will download the archive from online, uncompress it locally to home (`~/`), load the local `repdata-data-StormData.csv` file into an R object, and then save it out as `repdata-data-StormData.rds` (which is below the GitHub 100 MB limit):
+```
+setwd("~/")
+filepath_source      <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+filename             <- "repdata-data-StormData"
+filepath_destination <- paste("~/", filename, sep = "")
+download.file(url = filepath_source, destfile = paste(filepath_destination, ".csv.bz2", sep = ""), method = "curl")
+data                 <- bzfile(description = paste(filepath_destination, ".csv.bz2", sep = ""))
+data                 <- read.csv(data, stringsAsFactors = FALSE) # Remember to set stringsAsFactors = FALSE
+saveRDS(data, "~/repdata-data-StormData.rds")
+# NOTE: repdata-data-StormData.rds is then uploaded to my GitHub repository
+# We will use this for the remained of the analysis
 ```
 
 
+---
 
+## Results
+
+NULL
+
+---
+
+## Discussion
+
+### 1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+
+### 2. Across the United States, which types of events have the greatest economic consequences?
 
 ---
 ---

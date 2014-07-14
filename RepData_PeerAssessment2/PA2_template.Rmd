@@ -1,0 +1,34 @@
+---
+title: "Reproducible Research: Peer Assessment 2"
+author: "GitHub: atet"
+date: "July 14, 2014"
+output: html_document
+---
+
+---
+
+# TITLE:
+
+---
+
+## Synopsis
+
+NULL
+
+---
+
+## Data Processing
+  * A GitHub repository was created for this document at: https://github.com/atet/coursera/tree/master/RepData_PeerAssessment2
+  * The required data file `repdata-data-StormData.csv.bz2` is included in the repository.
+  * Since the archive uncompressed is > 100 MB, the following code will download the archive from online, uncompress it locally, and load the local `repdata-data-StormData.csv` file into R:
+```{r}
+local_repos_path <- "~/github/coursera/RepData_PeerAssessment2/" # This filepath may be different for others.
+bzfile(description = paste(local_repos_path, "repdata-data-StormData.csv.bz2", sep = ""), exdir = local_repos_path) 
+data_activity <- read.csv(paste(local_repos_path, "activity.csv", sep = ""))
+```
+
+
+
+
+---
+---

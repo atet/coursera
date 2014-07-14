@@ -122,7 +122,7 @@ variables <- data.frame(
     "Reported deaths from event.", "Damage to property", "Property damage exponent.", 
     "Damage to agricultural crops.", "Crop damage exponent.")
   )
-knitr::kable(time_zones)
+knitr::kable(variables)
 ``` 
   * Subset the main data into the eight variables appropriate for this analysis.
 ```{r}

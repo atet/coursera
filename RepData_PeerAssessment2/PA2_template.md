@@ -36,7 +36,8 @@ saveRDS(data, "~/repdata-data-StormData.rds")
 # We will use this for the remained of the analysis
 ```
   * This following code will now load the compressed `repdata-data-StormData.rds` from GitHub into R.
-```{r loadRDS}
+
+```r
 setwd("~/")
 filepath_source      <- "https://raw.github.com/atet/coursera/blob/master/RepData_PeerAssessment2/repdata-data-StormData.rds"
 filename             <- "repdata-data-StormData"

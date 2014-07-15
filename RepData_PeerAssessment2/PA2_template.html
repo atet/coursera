@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>TITLE HERE</title>
+<title>Impact Analysis of Severe Weather Events on Population and Economic Health in the United States from 1950-2011</title>
 
 <!-- Styles for R syntax highlighter -->
 <style type="text/css">
@@ -192,7 +192,7 @@ hr {
 <body>
 <hr/>
 
-<h1>TITLE HERE</h1>
+<h1>Impact Analysis of Severe Weather Events on Population and Economic Health in the United States from 1950-2011</h1>
 
 <hr/>
 
@@ -200,7 +200,11 @@ hr {
 
 <p>&ldquo;Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.&rdquo;</p>
 
-<p>Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration&#39;s (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), it has been determined that1.) which type(s) of weather events is most harmful with respect to U.S. population health and 2.) which have the greatest economic consequence.</p>
+<p>Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration&#39;s (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), it has been determined that&hellip; INSERT SUMMARY HERE</p>
+
+<p>1.) Which type(s) of weather events is most harmful with respect to U.S. population health and 2.) Which have the greatest economic consequence.</p>
+
+<p><strong>NOTE: Histogram image is not directly embedded since if this document is viewed as an *.md file through GitHub, it will not display, therefore I am sourcing the image through Markdown instead.</strong></p>
 
 <hr/>
 
@@ -242,9 +246,6 @@ data                 &lt;- readRDS(paste(filepath_destination, &quot;.rds&quot;,
 <ul>
 <li>This large dataset initially contains 902,297 observations with 37 variables each as seen below:</li>
 </ul>
-
-<pre><code class="r">str(data)
-</code></pre>
 
 <pre><code>## &#39;data.frame&#39;:    902297 obs. of  37 variables:
 ##  $ STATE__   : num  1 1 1 1 1 1 1 1 1 1 ...
@@ -410,7 +411,7 @@ data$TIME_ZONE[data$TIME_ZONE == &quot;ESY&quot;] = &quot;EST&quot; # Typo
 data$TIME_ZONE[data$TIME_ZONE == &quot;GMT&quot;] = &quot;UTC&quot; # Change GMT to UTC
 data$TIME_ZONE[data$TIME_ZONE == &quot;AKS&quot;] = &quot;HST&quot; # Change AKS to HST
 # Nine entries have unknown &quot;UNK&quot; timezones, The appropriate timezone was determined based on their $COUNTYNAME and $STATE
-data[data$TIME_ZONE == &quot;UNK&quot;, c(&quot;date&quot;, &quot;COUNTYNAME&quot;, &quot;STATE&quot;, &quot;TIME_ZONE&quot;)]
+print(data[data$TIME_ZONE == &quot;UNK&quot;, c(&quot;date&quot;, &quot;COUNTYNAME&quot;, &quot;STATE&quot;, &quot;TIME_ZONE&quot;)])
 </code></pre>
 
 <pre><code>##             date COUNTYNAME STATE TIME_ZONE
@@ -466,90 +467,46 @@ data$time_utc             &lt;- time_24h
     &quot;Reported deaths from event.&quot;, &quot;Damage to property&quot;, &quot;Property damage exponent.&quot;, 
     &quot;Damage to agricultural crops.&quot;, &quot;Crop damage exponent.&quot;)
   )
-knitr::kable(time_zones)
+knitr::kable(variables)
 </code></pre>
 
 <table><thead>
 <tr>
-<th align="left">Abbreviation</th>
+<th align="left">Variable</th>
 <th align="left">Description</th>
-<th align="left">UTC.Offset</th>
 </tr>
 </thead><tbody>
 <tr>
-<td align="left">SCT</td>
-<td align="left">Seychelles Time</td>
-<td align="left">0400</td>
+<td align="left">time_utc</td>
+<td align="left">Beginning date and time of event (UTC).</td>
 </tr>
 <tr>
-<td align="left">GST</td>
-<td align="left">Gulf Standard Time</td>
-<td align="left">0400</td>
+<td align="left">EVTYPE</td>
+<td align="left">Type of event.</td>
 </tr>
 <tr>
-<td align="left">UTC</td>
-<td align="left">Universal Time Coordinated</td>
-<td align="left">0000</td>
+<td align="left">INJURIES</td>
+<td align="left">Reported injuries from event</td>
 </tr>
 <tr>
-<td align="left">AST</td>
-<td align="left">Altantic Standard Time</td>
-<td align="left">-0400</td>
+<td align="left">FATALITIES</td>
+<td align="left">Reported deaths from event.</td>
 </tr>
 <tr>
-<td align="left">ADT</td>
-<td align="left">Altantic Daylight Time</td>
-<td align="left">-0300</td>
+<td align="left">PROPDMG</td>
+<td align="left">Damage to property</td>
 </tr>
 <tr>
-<td align="left">EST</td>
-<td align="left">Eastern Standard Time</td>
-<td align="left">-0500</td>
+<td align="left">PROPDMGEXP</td>
+<td align="left">Property damage exponent.</td>
 </tr>
 <tr>
-<td align="left">EDT</td>
-<td align="left">Eastern Daylight Time</td>
-<td align="left">-0400</td>
+<td align="left">CROPDMG</td>
+<td align="left">Damage to agricultural crops.</td>
 </tr>
 <tr>
-<td align="left">CST</td>
-<td align="left">Central Standard Time</td>
-<td align="left">-0600</td>
-</tr>
-<tr>
-<td align="left">CDT</td>
-<td align="left">Central Daylight Time</td>
-<td align="left">-0500</td>
-</tr>
-<tr>
-<td align="left">MST</td>
-<td align="left">Mountain Standard Time</td>
-<td align="left">-0700</td>
-</tr>
-<tr>
-<td align="left">MDT</td>
-<td align="left">Mountain Daylight Time</td>
-<td align="left">-0600</td>
-</tr>
-<tr>
-<td align="left">PST</td>
-<td align="left">Pacific Standard Time</td>
-<td align="left">-0800</td>
-</tr>
-<tr>
-<td align="left">PDT</td>
-<td align="left">Pacific Daylight Time</td>
-<td align="left">-0700</td>
-</tr>
-<tr>
-<td align="left">HST</td>
-<td align="left">Hawaii-Aleutian Standard Time</td>
-<td align="left">-1000</td>
-</tr>
-<tr>
-<td align="left">SST</td>
-<td align="left">Samoa Standard Time</td>
-<td align="left">-1100</td>
+<td align="left">CROPDMGEXP</td>
+<td align="left">Crop damage exponent.</td>
 </tr>
 </tbody></table>
 
@@ -557,7 +514,7 @@ knitr::kable(time_zones)
 <li>Subset the main data into the eight variables appropriate for this analysis.</li>
 </ul>
 
-<pre><code class="r">data &lt;- data[, colnames(data) %in% variables$Variable] 
+<pre><code class="r">data &lt;- data[ , colnames(data) %in% variables$Variable] 
 </code></pre>
 
 <p><strong>2.B.iii Monetary values</strong></p>
@@ -565,7 +522,7 @@ knitr::kable(time_zones)
 <ul>
 <li>To determine a single monetary value for property and crop damage, <code>$PROPDMG</code>, <code>$PROPDMGEXP</code>, <code>$CROPDMG</code>, and <code>$CROPDMGEXP</code> must be deciphered and combined.</li>
 <li>The <code>$PROPDMG</code> and <code>$CROPDMG</code> values are all numerical, I will assume that the corresponding <code>EXP</code> columns are 10<sup>exponent</sup> multipliers for these values and the value is in U.S dollars.</li>
-<li>Together, <code>$PROPDMGEXP</code> and <code>$CROPDMGEX</code> have 20 unique symbols as multipliers:</li>
+<li>Together, <code>$PROPDMGEXP</code> and <code>$CROPDMGEX</code> have 20 unique symbols as multipliers, these need to be harmonized:</li>
 </ul>
 
 <pre><code>##  [1] &quot;&quot;  &quot;K&quot; &quot;M&quot; &quot;B&quot; &quot;+&quot; &quot;0&quot; &quot;m&quot; &quot;5&quot; &quot;6&quot; &quot;?&quot; &quot;1&quot; &quot;3&quot; &quot;4&quot; &quot;2&quot; &quot;7&quot; &quot;H&quot; &quot;8&quot;
@@ -601,14 +558,142 @@ data$total_damage &lt;- (data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))) + (d
 <p><strong>2.B.iv Event type</strong></p>
 
 <ul>
-<li>Initially, there are 985 different unique <code>$EVTYPE</code> which describe the weather event. </li>
+<li>The recorded event types are different between years (source: <a href="http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype">http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype</a>):
+
+<ul>
+<li>1950-1955: Tornadoes</li>
+<li>1955-1996: Tornadoes, thunderstorm winds, and hail</li>
+<li>1996-present: 48 different event types</li>
+</ul></li>
+<li>Initially, there are 985 different unique <code>$EVTYPE</code> which describe the weather event.</li>
+<li>Clearly there are differences between labels and typos present, therefore these labels need to be harmonized.</li>
+<li>I will only consider the following types of events (with priority):
+
+<ol>
+<li>Cold-related (e.g. &ldquo;GROUND BLIZZARD&rdquo;, &ldquo;ICE STORM&rdquo;, &ldquo;RECORD SNOWFALL&rdquo;, etc.)</li>
+<li>Heat-related (e.g. &ldquo;EXCESSIVE HEAT&rdquo;, &ldquo;WILD/FOREST FIRE&rdquo;)</li>
+<li>Coastal (e.g. &ldquo;Heavy surf and wind&rdquo;, &ldquo;Beach Erosion&rdquo;, &ldquo;TSUNAMI&rdquo;, etc.)</li>
+<li>Wind-only (e.g. &ldquo;High winds&rdquo;, &ldquo;GUSTNADO&rdquo;, &ldquo;TORNADO&rdquo;, etc.)</li>
+<li>Rain-only (e.g. &ldquo;Mudslides&rdquo;, &ldquo;RAPIDLY RISING WATER&rdquo;, &ldquo;Wet Year&rdquo;, etc.)</li>
+<li>Other, entries with <code>$EVTYPE</code> labels that are incomplete or &ldquo;?&rdquo;, &ldquo;Summary of&hellip;&rdquo;, &ldquo;&quot;No Severe Weather&rdquo;&ldquo;,  etc.</li>
+</ol></li>
 </ul>
+
+<pre><code class="r"># Replace original terms with one of the five terms using regular expressions and list of related words
+# Cold-related events
+data$EVTYPE[
+  grepl(
+    &quot;cold|cool|snow|ice|frost|freez|icy|chill|blizzard|wint|low|glaze|fog|avalanche|avalance|hypothermia&quot;,
+    data$EVTYPE, ignore.case = TRUE)
+  ] &lt;- &quot;cold&quot;
+# Heat-related events
+data$EVTYPE[
+  grepl(
+    &quot;heat|high|fire|hot|warm|drought|dry|driest&quot;,
+    data$EVTYPE, ignore.case = TRUE)
+  ] &lt;- &quot;heat&quot;
+# Coastal events
+data$EVTYPE[
+  grepl(
+    &quot;coastal|seas|slump|beach|tsunami|current|marine|tidal|tide|hurricane|surf|typhoon|swell|spout|seiche|tropical|cstl|wave&quot;,
+    data$EVTYPE, ignore.case = TRUE)
+  ] &lt;- &quot;coastal&quot;
+# Wind-only events
+data$EVTYPE[
+  grepl(
+    &quot;wind|wnd|gust|dust|smoke|ash|funnel|cloud|burst|tornado|torndao|volcanic&quot;, 
+    data$EVTYPE, ignore.case = TRUE)
+  ] &lt;- &quot;wind&quot;
+# Rain-only events
+data$EVTYPE[
+  grepl(
+    &quot;rain|flood|fldg|storm|slide|hail|sleet|precip|stream|wet|light|lignt|cloud|tstm|fog|vog|water|shower|mix&quot;,
+    data$EVTYPE, ignore.case = TRUE) 
+  ] &lt;- &quot;rain&quot;
+# &quot;Other&quot; events
+data$EVTYPE[
+  !grepl(
+    &quot;cold|heat|coastal|wind|rain&quot;,
+    data$EVTYPE, ignore.case = TRUE) 
+  ] &lt;- &quot;other&quot;
+# Resulting distribution of events by these six different event categories
+print(table(data$EVTYPE))
+</code></pre>
+
+<pre><code>## 
+## coastal    cold    heat   other    rain    wind 
+##   19393   49364   33039     208  347186  453107
+</code></pre>
+
+<ul>
+<li>For the purposes of this study, I will now consider the <code>data</code> to be harmonized, clean, and ready for analysis.</li>
+</ul>
+
+<pre><code>## &#39;data.frame&#39;:    902297 obs. of  9 variables:
+##  $ EVTYPE      : chr  &quot;heat&quot; &quot;heat&quot; &quot;heat&quot; &quot;rain&quot; ...
+##  $ FATALITIES  : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ INJURIES    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ PROPDMG     : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ PROPDMGEXP  : chr  &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
+##  $ CROPDMG     : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ CROPDMGEXP  : chr  &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
+##  $ time_utc    : POSIXlt, format: &quot;1994-10-01 09:00:00&quot; &quot;1993-09-05 18:00:00&quot; ...
+##  $ total_damage: num  0 0 0 0 0 0 0 0 0 0 ...
+## NULL
+</code></pre>
 
 <hr/>
 
 <h2>3. Results</h2>
 
-<p>NULL</p>
+<h3>3.A Population Health Impact Resulting From Weather Events</h3>
+
+<ul>
+<li>INSERT DESCRIPTION</li>
+</ul>
+
+<pre><code class="r">health_by_event &lt;- rbind(
+  data.frame(
+    event = c(&quot;Coastal&quot;,&quot;Cold&quot;,&quot;Heat&quot;,&quot;Other&quot;,&quot;Rain&quot;,&quot;Wind&quot;),
+    count = tapply(X = data$INJURIES, INDEX = data$EVTYPE, FUN = sum),
+    type = &quot;Injury&quot;),
+  data.frame(
+    event = c(&quot;Coastal&quot;,&quot;Cold&quot;,&quot;Heat&quot;,&quot;Other&quot;,&quot;Rain&quot;,&quot;Wind&quot;),
+    count = tapply(X = data$FATALITIES, INDEX = data$EVTYPE, FUN = sum),
+    type = &quot;Fatality&quot;))
+
+library(ggplot2)
+
+ggplot(health_by_event, aes(x = event, y = count, fill = type)) + 
+  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
+  labs(x = &quot;Weather Event&quot;, y = &quot;Counts&quot;,
+       title = &quot;Number of Injury/Fatalities per Weather Event\nin the United States (1950-2011)&quot;) +
+  scale_fill_discrete(name = &quot;Health Impact\nType&quot;) +
+  geom_text(aes(label = formatC(round(count, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), ymax = 0), size = 5, position = position_dodge(width = 1), vjust = -1)
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/atet/coursera/RepData_PeerAssessment2/master/figure/fig1.png" alt="Alt text"/></p>
+
+<h3>3.B Economic Impact Resulting From Weather Events</h3>
+
+<ul>
+<li>INSERT DESCRIPTION</li>
+</ul>
+
+<pre><code class="r">economic_by_event &lt;- data.frame(
+    event = c(&quot;Coastal&quot;,&quot;Cold&quot;,&quot;Heat&quot;,&quot;Other&quot;,&quot;Rain&quot;,&quot;Wind&quot;),
+    usd_mil = tapply(X = data$total_damage, INDEX = data$EVTYPE, FUN = sum) / 1000000)
+
+library(ggplot2)
+
+ggplot(economic_by_event, aes(x = event, y = usd_mil)) + 
+  geom_bar(fill = &quot;white&quot;, colour = &quot;darkgreen&quot;, stat = &quot;identity&quot;) +
+  labs(x = &quot;Weather Event&quot;, y = &quot;Total Property + Crop Damage (in millions of dollars USD)&quot;,
+       title = &quot;Cost of Property and Crop Damage per Weather Event\nin the United States (1950-2011)&quot;) +
+  geom_text(aes(label = paste(&quot;$&quot;, formatC(round(usd_mil, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), sep = &quot;&quot;), ymax = 0), size = 5, vjust = -1)
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/atet/coursera/RepData_PeerAssessment2/master/figure/fig2.png" alt="Alt text"/></p>
 
 <hr/>
 

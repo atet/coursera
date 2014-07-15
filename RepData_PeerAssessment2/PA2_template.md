@@ -365,7 +365,7 @@ ggplot(health_by_event, aes(x = event, y = count, fill = type)) +
   geom_text(aes(label = formatC(round(count, digits = 1), format = "d", big.mark = ",", small.mark = ".", width = 2), ymax = 0), size = 5, position = position_dodge(width = 1), vjust = -1)
 ```
 
-![Alt text](https://raw.githubusercontent.com/atet/coursera/RepData_PeerAssessment2/master/figure/fig1.png)
+![Alt text](https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/fig1.png)
 
 ### 3.B Economic Impact Resulting From Weather Events
   * INSERT DESCRIPTION
@@ -384,7 +384,7 @@ ggplot(economic_by_event, aes(x = event, y = usd_mil)) +
   geom_text(aes(label = paste("$", formatC(round(usd_mil, digits = 1), format = "d", big.mark = ",", small.mark = ".", width = 2), sep = ""), ymax = 0), size = 5, vjust = -1)
 ```
 
-![Alt text](https://raw.githubusercontent.com/atet/coursera/RepData_PeerAssessment2/master/figure/fig2.png)
+![Alt text](https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/fig2.png)
 
 ---
 

@@ -29,7 +29,9 @@ A GitHub repository was created for this document at: https://github.com/atet/co
 ### 2.A Loading Data
   * The original required data file archive `repdata-data-StormData.csv.bz2` and the prepared compressed `repdata-data-StormData.rds` is included in the repository
   * The following code is to convert the original `repdata-data-StormData.csv.bz2` to a compressed R object `repdata-data-StormData.rds`. Since the archive uncompressed is > 100 MB, the following code will download the archive from online, uncompress it locally to home (`~/`), load the local `repdata-data-StormData.csv` file into an R object, and then save it out as `repdata-data-StormData.rds` (which is below the GitHub 100 MB limit):
+
 ```{r load_bz2, eval=FALSE}
+
 setwd("~/")
 filepath_source      <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
 filename             <- "repdata-data-StormData"
@@ -40,25 +42,69 @@ data                 <- read.csv(data, stringsAsFactors = FALSE) # Remember to s
 saveRDS(data, "~/repdata-data-StormData.rds")
 # NOTE: repdata-data-StormData.rds is then uploaded to my GitHub repository
 # We will use this for the remained of the analysis
+
 ```
+
   * This following code will now load the compressed `repdata-data-StormData.rds` from GitHub into R.
+
 ```{r load_rds}
+
 setwd("~/")
 filepath_source      <- "https://raw.github.com/atet/coursera/blob/master/RepData_PeerAssessment2/repdata-data-StormData.rds"
 filename             <- "repdata-data-StormData"
-filepath_destination <- paste("~/", filename, sep = "")
-download.file(url = filepath_source, destfile = paste(filepath_destination, ".rds", sep = ""), method = "curl")
-data                 <- readRDS(paste(filepath_destination, ".rds", sep = ""))
+filepath_destination <- paste("~/", filename, ".rds", sep = "")
+download.file(url = filepath_source, destfile = filepath_destination, method = "curl")
+data                 <- readRDS(filepath_destination)
+
 ```
- * This large dataset initially contains 902,297 observations with 37 variables each as seen below:
+
+  * This large dataset initially contains 902,297 observations with 37 variables each as seen below:
+
 ```{r, echo=FALSE}
+
 str(data)
+
 ```
+
+  * Supplementary data: Census data of U.S. population by county from 1900-1990 from the National Bureau of Economic Research ([http://www.nber.org/census/pop/cencounts.csv](http://www.nber.org/census/pop/cencounts.csv)):
+    
+```{r load_supplemental1}
+
+setwd("~/")
+filepath_source      <- "http://www.nber.org/census/pop/cencounts.csv"
+filename             <- "cencounts"
+filepath_destination <- paste("~/", filename, ".csv", sep = "")
+download.file(url = filepath_source, destfile = filepath_destination)
+# Only load information about year and total surplus/deficit
+us_county_population <- read.csv(filepath_destination, stringsAsFactors = FALSE) 
+
+``` 
+
+  * Supplementary data: Annual U.S. federal budget expenditures from whitehouse.gov ([http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls](http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls)):
+    
+```{r load_supplemental2, message=FALSE}
+
+library(xlsx)
+setwd("~/")
+filepath_source      <- "http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls"
+filename             <- "hist01z1"
+filepath_destination <- paste("~/", filename, ".xls", sep = "")
+download.file(url = filepath_source, destfile = filepath_destination, method = "curl")
+# Only load information about year and total surplus/deficit
+us_federal_budget    <- read.xlsx(
+  filepath_destination, 
+  sheetIndex = 1, startRow = 4, colIndex = c(1,4), stringsAsFactors = FALSE) 
+
+``` 
+
+
 
 ### 2.B Cleaning Data
 **2.B.i Date and time**
   * Entries are from 16 different time zones:
+
 ```{r, results='asis'}
+
 time_zones <- data.frame(
   "Abbreviation" = c(
     "SCT","GST","UTC","AST","ADT","EST","EDT",
@@ -75,9 +121,13 @@ time_zones <- data.frame(
     "-1100")
   )
 knitr::kable(time_zones)
+
 ```
+
   * Create a uniform date/time value in UTC (Universal Time, Coordinated) of `POSIX` type using the `$BGN_DATE` and `$BGN_TIME`:
+
 ```{r, warning=FALSE}
+
 # Trim $BGN_DATE since the date is correct, but the trailing time are all irrelevant 0:00:00
 data$date <- gsub(" 0:00:00", "", data$BGN_DATE)
 # Clean up timezone $TIME_ZONE, some values need to be changed for consistency
@@ -112,11 +162,15 @@ time_24h[is.na(time_24h)] <- time_12h[!is.na(time_12h)] # Will produce warning, 
 # Make new column time_utc
 data$time_utc             <- time_24h
 # NOTE: Though there are various additional issues with date and time, there will be no more subsequent cleaning here.
+
 ```
+
 **2.B.ii Necessary variables**
   * Subset the source data into only columns that relate to weather event, injury/loss-of-life, and economic impact.
   * Including the date of the event cleaned up previously as `$time_utc`, using the documentation provided by the National Weather Service ([https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf)), the following variables relate to weather event, injury/loss-of-life, or economic impact.
+
 ```{r, results='asis'}
+
 variables <- data.frame(
   "Variable" = c(
     "time_utc", "EVTYPE","INJURIES","FATALITIES","PROPDMG",
@@ -127,20 +181,33 @@ variables <- data.frame(
     "Damage to agricultural crops.", "Crop damage exponent.")
   )
 knitr::kable(variables)
+
 ``` 
+
   * Subset the main data into the eight variables appropriate for this analysis.
+
 ```{r}
+
 data <- data[ , colnames(data) %in% variables$Variable] 
+
 ```
+
 **2.B.iii Monetary values**
+
   * To determine a single monetary value for property and crop damage, `$PROPDMG`, `$PROPDMGEXP`, `$CROPDMG`, and `$CROPDMGEXP` must be deciphered and combined.
   * The `$PROPDMG` and `$CROPDMG` values are all numerical, I will assume that the corresponding `EXP` columns are 10^exponent multipliers for these values and the value is in U.S dollars.
   * Together, `$PROPDMGEXP` and `$CROPDMGEX` have 20 unique symbols as multipliers, these need to be harmonized:
+
 ```{r, echo=FALSE}
+
 print(unique(c(data$PROPDMGEXP, data$CROPDMGEXP)))
+
 ```
+
   * I will assume the following about the different exponent symbols:
+
 ```{r}
+
 # Symbols that are missing (NA), blank (""), "+", "-", or "?" will be replaced with a zero (10^0 = 1)
 data$PROPDMGEXP[is.na(data$PROPDMGEXP) | data$PROPDMGEXP == "" |
   data$PROPDMGEXP == "?" | data$PROPDMGEXP == "+" | data$PROPDMGEXP == "-"] <- 0
@@ -161,7 +228,9 @@ data$CROPDMGEXP[data$CROPDMGEXP == "b" | data$CROPDMGEXP == "B"] <- 9
 # The remaining symbols are already numberic and assumed correct exponents
 # Make column $total_damage that combines the total property and crop damage
 data$total_damage <- (data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))) + (data$CROPDMG * (10 ^ as.numeric(data$CROPDMGEXP)))
+
 ```
+
 **2.B.iv Event type**
   * The recorded event types are different between years (source: [http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype](http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype)):
     * 1950-1955: Tornadoes
@@ -178,6 +247,7 @@ data$total_damage <- (data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))) + (data
     6. Other, entries with `$EVTYPE` labels that are incomplete or "?", "Summary of...", ""No Severe Weather"",  etc.
 
 ```{r}
+
 # Replace original terms with one of the five terms using regular expressions and list of related words
 # Cold-related events
 data$EVTYPE[
@@ -217,12 +287,61 @@ data$EVTYPE[
   ] <- "other"
 # Resulting distribution of events by these six different event categories
 print(table(data$EVTYPE))
+
 ```
  
   * For the purposes of this study, I will now consider the `data` to be harmonized, clean, and ready for analysis.
+
 ```{r, echo=FALSE}
+
 print(str(data))
+
 ```
+
+**2.B.v Supplementary data**
+  * Clean up population data.
+  
+```{r}
+
+# Change column names
+colnames(us_federal_budget) <- c("year","amount")
+# Will assume the estimated amounts in the report for 2010-2011 are the actual values
+us_federal_budget[us_federal_budget$year == "2010 estimate",]$year <- 2010
+us_federal_budget[us_federal_budget$year == "2011 estimate",]$year <- 2011
+# Subset out years 1950-2011
+us_federal_budget           <- us_federal_budget[us_federal_budget$year >= 1950 & us_federal_budget$year <= 2011,]
+# Coerce both character columns to numeric
+us_federal_budget$year      <- as.numeric(us_federal_budget$year)
+us_federal_budget$amount    <- as.numeric(us_federal_budget$amount)
+# Multiply value by million multiplier (as stated in the document, values are in millions)
+us_federal_budget$amount    <- us_federal_budget$amount * 1000000
+# Erase rownames
+rownames(us_federal_budget) <- NULL
+
+```
+
+  * Subset needed years (1950-2011), convert values as stated in the document (values are in millions $ USD).
+  
+```{r}
+
+# Change column names
+colnames(us_federal_budget) <- c("year","amount")
+# Will assume the estimated amounts in the report for 2010-2011 are the actual values
+us_federal_budget[us_federal_budget$year == "2010 estimate",]$year <- 2010
+us_federal_budget[us_federal_budget$year == "2011 estimate",]$year <- 2011
+# Subset out years 1950-2011
+us_federal_budget           <- us_federal_budget[us_federal_budget$year >= 1950 & us_federal_budget$year <= 2011,]
+# Coerce both character columns to numeric
+us_federal_budget$year      <- as.numeric(us_federal_budget$year)
+us_federal_budget$amount    <- as.numeric(us_federal_budget$amount)
+# Multiply value by million multiplier (as stated in the document, values are in millions)
+us_federal_budget$amount    <- us_federal_budget$amount * 1000000
+# Erase rownames
+rownames(us_federal_budget) <- NULL
+
+```
+
+
 ---
 
 ## 3. Results

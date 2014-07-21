@@ -7,6 +7,8 @@ output: html_document
 
 ---
 
+**NOTE: I am submitting this early, but seeing how this is a public repository, anyone can see it right away. If you need help, you can use this as a guide to understanding the problem, but please do not just copy/paste this code. R has a steep learning curve, but you will get it with time and experience, I have faith in you.**
+
 # Impact Analysis of Severe Weather Events on Population and Economic Health in the United States from 1950-2011
 
 ---
@@ -15,44 +17,40 @@ output: html_document
 
 "Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern."
 
-Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), it has been determined that... INSERT SUMMARY HERE
-
-1.) Which type(s) of weather events is most harmful with respect to U.S. population health and 2.) Which have the greatest economic consequence.
-
-**NOTE: Histogram image is not directly embedded since if this document is viewed as an *.md file through GitHub, it will not display, therefore I am sourcing the image through Markdown instead.**
+Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), types of weather events were examined to determine which were most harmful to U.S. population health and had the greatest national economic consequence.
 
 ---
 
 ## 2. Data Processing
+
 A GitHub repository was created for this document at: https://github.com/atet/coursera/tree/master/RepData_PeerAssessment2
 
 ### 2.A Loading Data
-  * The original required data file archive `repdata-data-StormData.csv.bz2` and the prepared compressed `repdata-data-StormData.rds` is included in the repository
-  * The following code is to convert the original `repdata-data-StormData.csv.bz2` to a compressed R object `repdata-data-StormData.rds`. Since the archive uncompressed is > 100 MB, the following code will download the archive from online, uncompress it locally to home (`~/`), load the local `repdata-data-StormData.csv` file into an R object, and then save it out as `repdata-data-StormData.rds` (which is below the GitHub 100 MB limit):
+
+The original required data file archive `repdata-data-StormData.csv.bz2` is downloaded from the course website and uncompressed locally:
+
 
 ```r
 setwd("~/")
 filepath_source      <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
-filename             <- "repdata-data-StormData"
-filepath_destination <- paste("~/", filename, sep = "")
-download.file(url = filepath_source, destfile = paste(filepath_destination, ".csv.bz2", sep = ""), method = "curl")
-data                 <- bzfile(description = paste(filepath_destination, ".csv.bz2", sep = ""))
+filepath_destination <- "~/repdata-data-StormData.csv.bz2"
+download.file(url = filepath_source, destfile = filepath_destination, method = "curl")
+data                 <- bzfile(description = filepath_destination)
+# This may take a while!!!
 data                 <- read.csv(data, stringsAsFactors = FALSE) # Remember to set stringsAsFactors = FALSE
+# Saving out as compressed R object (*.rds) for convenience (in case the file needs to be loaded again, will take R less time)
 saveRDS(data, "~/repdata-data-StormData.rds")
-# NOTE: repdata-data-StormData.rds is then uploaded to my GitHub repository
-# We will use this for the remained of the analysis
 ```
-  * This following code will now load the compressed `repdata-data-StormData.rds` from GitHub into R.
+
+Reload the dataset from the R object compressed form:
+
 
 ```r
-setwd("~/")
-filepath_source      <- "https://raw.github.com/atet/coursera/blob/master/RepData_PeerAssessment2/repdata-data-StormData.rds"
-filename             <- "repdata-data-StormData"
-filepath_destination <- paste("~/", filename, sep = "")
-download.file(url = filepath_source, destfile = paste(filepath_destination, ".rds", sep = ""), method = "curl")
-data                 <- readRDS(paste(filepath_destination, ".rds", sep = ""))
+data <- readRDS("~/repdata-data-StormData.rds")
 ```
- * This large dataset initially contains 902,297 observations with 37 variables each as seen below:
+
+This large dataset initially contains 902,297 observations with 37 variables each as seen below:
+
 
 ```
 ## 'data.frame':	902297 obs. of  37 variables:
@@ -95,9 +93,41 @@ data                 <- readRDS(paste(filepath_destination, ".rds", sep = ""))
 ##  $ REFNUM    : num  1 2 3 4 5 6 7 8 9 10 ...
 ```
 
+Supplementary data: Census data of U.S. population by county from 1900-1990 from the National Bureau of Economic Research ([http://www.nber.org/census/pop/cencounts.csv](http://www.nber.org/census/pop/cencounts.csv)):
+    
+
+```r
+# Download file from source to local
+download.file(url = "http://www.nber.org/census/pop/cencounts.csv", destfile = "~/cencounts.csv")
+```
+
+
+```r
+# Load the downloaded file
+us_county_population <- read.csv(file = "~/cencounts.csv", stringsAsFactors = FALSE) 
+```
+
+Supplementary data: Annual U.S. federal budget expenditures from whitehouse.gov ([http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls](http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls)):
+    
+
+```r
+# Download file from source to local
+library(xlsx)
+download.file(url = "http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls", destfile = "~/hist01z1.xls", method = "curl")
+```
+
+
+```r
+# Load the downloaded file, only load information about year and total surplus/deficit
+us_federal_budget    <- read.xlsx(file = "~/hist01z1.xls", sheetIndex = 1, startRow = 4, stringsAsFactors = FALSE) 
+```
+
 ### 2.B Cleaning Data
+
 **2.B.i Date and time**
-  * Entries are from 16 different time zones:
+
+Date and time entries are from 16 different time zones, Universal Time Coordinated offsets for each of these timezones were determined from Wikipedia.org ([http://en.wikipedia.org/wiki/Time_zones](http://en.wikipedia.org/wiki/Time_zones)):
+
 
 ```r
 time_zones <- data.frame(
@@ -137,10 +167,12 @@ knitr::kable(time_zones)
 |PDT          |Pacific Daylight Time         |-0700      |
 |HST          |Hawaii-Aleutian Standard Time |-1000      |
 |SST          |Samoa Standard Time           |-1100      |
-  * Create a uniform date/time value in UTC (Universal Time, Coordinated) of `POSIX` type using the `$BGN_DATE` and `$BGN_TIME`:
+
+Create a uniform date/time value in UTC (Universal Time, Coordinated) of `POSIX` type using the `$BGN_DATE` and `$BGN_TIME`:
+
 
 ```r
-# Trim $BGN_DATE since the date is correct, but the trailing time are all irrelevant 0:00:00
+# Trim $BGN_DATE since the date is correct, but the trailing time are all irrelevant "0:00:00""
 data$date <- gsub(" 0:00:00", "", data$BGN_DATE)
 # Clean up timezone $TIME_ZONE, some values need to be changed for consistency
 data$TIME_ZONE[data$TIME_ZONE == "CSt"] = "CST" # Typo
@@ -191,9 +223,13 @@ time_24h[is.na(time_24h)] <- time_12h[!is.na(time_12h)] # Will produce warning, 
 data$time_utc             <- time_24h
 # NOTE: Though there are various additional issues with date and time, there will be no more subsequent cleaning here.
 ```
+
 **2.B.ii Necessary variables**
-  * Subset the source data into only columns that relate to weather event, injury/loss-of-life, and economic impact.
-  * Including the date of the event cleaned up previously as `$time_utc`, using the documentation provided by the National Weather Service ([https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf)), the following variables relate to weather event, injury/loss-of-life, or economic impact.
+
+Subset the source data into only columns that relate to weather event, injury/loss-of-life, and economic impact.
+
+Including the date of the event cleaned up previously as `$time_utc`, using the documentation provided by the National Weather Service ([https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf)), the following variables relate to weather event, injury/loss-of-life, or economic impact.
+
 
 ```r
 variables <- data.frame(
@@ -220,21 +256,32 @@ knitr::kable(variables)
 |PROPDMGEXP |Property damage exponent.               |
 |CROPDMG    |Damage to agricultural crops.           |
 |CROPDMGEXP |Crop damage exponent.                   |
-  * Subset the main data into the eight variables appropriate for this analysis.
+
+Subset the main data into the eight variables appropriate for this analysis.
+
 
 ```r
 data <- data[ , colnames(data) %in% variables$Variable] 
 ```
+
 **2.B.iii Monetary values**
-  * To determine a single monetary value for property and crop damage, `$PROPDMG`, `$PROPDMGEXP`, `$CROPDMG`, and `$CROPDMGEXP` must be deciphered and combined.
-  * The `$PROPDMG` and `$CROPDMG` values are all numerical, I will assume that the corresponding `EXP` columns are 10^exponent multipliers for these values and the value is in U.S dollars.
-  * Together, `$PROPDMGEXP` and `$CROPDMGEX` have 20 unique symbols as multipliers, these need to be harmonized:
+
+To determine a single monetary value for property and crop damage, `$PROPDMG`, `$PROPDMGEXP`, `$CROPDMG`, and `$CROPDMGEXP` must be deciphered and combined.
+
+The following information is described in Section 2.7 from [https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf).
+
+The `$PROPDMG` and `$CROPDMG` values are all numerical, the corresponding `$*EXP` columns are 10^exponent multipliers for these values and the value is in U.S dollars.
+
+Together, `$PROPDMGEXP` and `$CROPDMGEX` have 20 unique symbols as multipliers, these need to be harmonized:
+
 
 ```
 ##  [1] ""  "K" "M" "B" "+" "0" "m" "5" "6" "?" "1" "3" "4" "2" "7" "H" "8"
 ## [18] "h" "-" "k"
 ```
-  * I will assume the following about the different exponent symbols:
+
+Harmonize the different exponent symbols:
+
 
 ```r
 # Symbols that are missing (NA), blank (""), "+", "-", or "?" will be replaced with a zero (10^0 = 1)
@@ -258,20 +305,25 @@ data$CROPDMGEXP[data$CROPDMGEXP == "b" | data$CROPDMGEXP == "B"] <- 9
 # Make column $total_damage that combines the total property and crop damage
 data$total_damage <- (data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))) + (data$CROPDMG * (10 ^ as.numeric(data$CROPDMGEXP)))
 ```
+
 **2.B.iv Event type**
-  * The recorded event types are different between years (source: [http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype](http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype)):
-    * 1950-1955: Tornadoes
-    * 1955-1996: Tornadoes, thunderstorm winds, and hail
-    * 1996-present: 48 different event types
-  * Initially, there are 985 different unique `$EVTYPE` which describe the weather event.
-  * Clearly there are differences between labels and typos present, therefore these labels need to be harmonized.
-  * I will only consider the following types of events (with priority):
-    1. Cold-related (e.g. "GROUND BLIZZARD", "ICE STORM", "RECORD SNOWFALL", etc.)
-    2. Heat-related (e.g. "EXCESSIVE HEAT", "WILD/FOREST FIRE")
-    3. Coastal (e.g. "Heavy surf and wind", "Beach Erosion", "TSUNAMI", etc.)
-    4. Wind-only (e.g. "High winds", "GUSTNADO", "TORNADO", etc.)
-    5. Rain-only (e.g. "Mudslides", "RAPIDLY RISING WATER", "Wet Year", etc.)
-    6. Other, entries with `$EVTYPE` labels that are incomplete or "?", "Summary of...", ""No Severe Weather"",  etc.
+
+The recorded event types are different between years (source: [http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype](http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype)):
+  * 1950-1955: Tornadoes
+  * 1955-1996: Tornadoes, thunderstorm winds, and hail
+  * 1996-present: 48 different event types
+
+Initially, there are 985 different unique `$EVTYPE` which describe the weather event.
+
+Clearly there are differences between labels and typos present, therefore these labels need to be harmonized.
+
+I will only consider the following types of events (with priority):
+  1. Cold-related (e.g. "GROUND BLIZZARD", "ICE STORM", "RECORD SNOWFALL", etc.)
+  2. Heat-related (e.g. "EXCESSIVE HEAT", "WILD/FOREST FIRE")
+  3. Coastal (e.g. "Heavy surf and wind", "Beach Erosion", "TSUNAMI", etc.)
+  4. Wind-only (e.g. "High winds", "GUSTNADO", "TORNADO", etc.)
+  5. Rain-only (e.g. "Mudslides", "RAPIDLY RISING WATER", "Wet Year", etc.)
+  6. Other, entries with `$EVTYPE` labels that are incomplete or "?", "Summary of...", ""No Severe Weather"",  etc.
 
 
 ```r
@@ -322,7 +374,8 @@ print(table(data$EVTYPE))
 ##   19393   49364   33039     208  347186  453107
 ```
  
-  * For the purposes of this study, I will now consider the `data` to be harmonized, clean, and ready for analysis.
+**For the purposes of this study, I will now consider the `data` to be harmonized, clean, and ready for analysis**.
+
 
 ```
 ## 'data.frame':	902297 obs. of  9 variables:
@@ -337,14 +390,52 @@ print(table(data$EVTYPE))
 ##  $ total_damage: num  0 0 0 0 0 0 0 0 0 0 ...
 ## NULL
 ```
+
+**2.B.v Supplementary data**
+
+Clean up population data: Subset needed rows and columns.
+  
+
+```r
+# For this analysis, only considering total U.S. population in row 1 and year 1950-1990 in columns 6:10
+us_county_population <- us_county_population[1,c(6:10)]
+```
+
+Clean up budget data: Subset needed columns and years, convert values as stated in the document (values are in millions $ USD).
+  
+
+```r
+# Only load information about year and total surplus/deficit (years in column 1 and surplus or deficits in column 4)
+us_federal_budget           <- us_federal_budget[c(1,4)]
+# Change column names
+colnames(us_federal_budget) <- c("year","amount")
+# Will assume the estimated amounts in the report for 2010-2011 are the actual values
+us_federal_budget[us_federal_budget$year == "2010 estimate",]$year <- 2010
+us_federal_budget[us_federal_budget$year == "2011 estimate",]$year <- 2011
+# Subset out years 1950-2011
+us_federal_budget           <- us_federal_budget[us_federal_budget$year >= 1950 & us_federal_budget$year <= 2011,]
+# Coerce both character columns to numeric
+us_federal_budget$year      <- as.numeric(us_federal_budget$year)
+us_federal_budget$amount    <- as.numeric(us_federal_budget$amount)
+# Multiply value by million multiplier (as stated in the document, values are in millions)
+us_federal_budget$amount    <- us_federal_budget$amount * 1000000
+# Erase rownames
+rownames(us_federal_budget) <- NULL
+```
+
 ---
 
 ## 3. Results
 
+**NOTE: Histogram image is not directly embedded since if this document is viewed as an .md file through GitHub, it will not display, therefore I am sourcing the image through Markdown instead.**
+
 ### 3.A Population Health Impact Resulting From Weather Events
-  * INSERT DESCRIPTION
+
+The number of injuries and fatalities are plotted across event types in Figure 1.
+
 
 ```r
+# Gather information determining the relationship between event type with injuries and fatalities
 health_by_event <- rbind(
   data.frame(
     event = c("Coastal","Cold","Heat","Other","Rain","Wind"),
@@ -355,44 +446,114 @@ health_by_event <- rbind(
     count = tapply(X = data$FATALITIES, INDEX = data$EVTYPE, FUN = sum),
     type = "Fatality"))
 
+# Plot
 library(ggplot2)
-
 ggplot(health_by_event, aes(x = event, y = count, fill = type)) + 
   geom_bar(position = "dodge", stat = "identity") +
   labs(x = "Weather Event", y = "Counts",
-       title = "Number of Injury/Fatalities per Weather Event\nin the United States (1950-2011)") +
+    title = "Number of Injury/Fatalities per Weather Event\nin the United States (1950-2011)") +
   scale_fill_discrete(name = "Health Impact\nType") +
-  geom_text(aes(label = formatC(round(count, digits = 1), format = "d", big.mark = ",", small.mark = ".", width = 2), ymax = 0), size = 5, position = position_dodge(width = 1), vjust = -1)
+  geom_text(aes(
+    label = formatC(round(count, digits = 1), format = "d", big.mark = ",", small.mark = ".", width = 2), ymax = 0),
+    size = 5, position = position_dodge(width = 1), vjust = 0)
 ```
 
-![Alt text](https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/fig1.png)
+![Alt text](https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure1.png)
 
-### 3.B Economic Impact Resulting From Weather Events
-  * INSERT DESCRIPTION
+**Figure 1**. Number of injuries and fatalities for a given event type. Injuries and fatalities are summed from each individual event of a given event type.
+
+### 3.B Population Health Impact Resulting From Weather Events Compared to Total U.S. Population Across Decades From 1950-1990
+
+The number of injuries and fatalities are plotted across event types by decade in Figure 2. Additionally, information regarding total U.S. population for each decade is used to normalize. Since the census data was limited to 1900-1990 and the event data only contained `wind` or `rain` catergorized events from 1950s-1990's, I will only look into dates from 1950-1999 and these two event types.  
+
 
 ```r
+# Additionally, add supplementary information concerning U.S. population counts during the decade of the event
+# Subset to just wind and rain event types
+data_by_decade        <- data[data$EVTYPE == "rain" | data$EVTYPE == "wind",]
+# Make column for decade
+data_by_decade$decade <- floor(as.numeric(format(x = data_by_decade$time_utc, format = "%y")) / 10)
+# Subset data with relevant decade range from census data, 1950-1999
+data_by_decade        <- data_by_decade[data_by_decade$decade >= 5 & data_by_decade$decade <= 9,]
+# Using census data by decade, determine percentage of total U.S. population injured of killed.
+# Since the total U.S. population is far greater than the number of injuries/fatalities, will consider
+# using the full population value (may/may not already account for the deaths from these event)
+data_by_decade$decade_population <- NA
+data_by_decade[data_by_decade$decade == 5,]$decade_population <- us_county_population[[1]] # 1950's
+data_by_decade[data_by_decade$decade == 6,]$decade_population <- us_county_population[[2]] # 1960's
+data_by_decade[data_by_decade$decade == 7,]$decade_population <- us_county_population[[3]] # 1970's
+data_by_decade[data_by_decade$decade == 8,]$decade_population <- us_county_population[[4]] # 1980's
+data_by_decade[data_by_decade$decade == 9,]$decade_population <- us_county_population[[5]] # 1990's
+data_by_decade$decade_population <- as.numeric(data_by_decade$decade_population)
+# Determine percentage of population (of that decade) injured or killed per event.
+data_by_decade$injuries_pop_percent   <- (data_by_decade$INJURIES / data_by_decade$decade_population) * 100
+data_by_decade$fatalities_pop_percent <- (data_by_decade$FATALITIES / data_by_decade$decade_population) * 100
+
+# Determine total injuries and fatalities percentages for each decade
+data_by_decade   <- data_by_decade[order(data_by_decade$decade),]
+health_by_decade <- rbind(
+  data.frame(
+    decade = c("1950's","1960's","1970's","1980's","1990's"),
+    count = tapply(X = data_by_decade$injuries_pop_percent, INDEX = list(data_by_decade$decade, data_by_decade$EVTYPE), FUN = sum),
+    type = "Injury"),
+  data.frame(
+    decade = c("1950's","1960's","1970's","1980's","1990's"),
+    count = tapply(X = data_by_decade$fatalities_pop_percent, INDEX = list(data_by_decade$decade, data_by_decade$EVTYPE), FUN = sum),
+    type = "Fatality"))
+
+# TO DO: PLOT
+```
+
+![Alt text](https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure2.png)
+
+**Figure 2**. Number of injuries and fatalities for a given event type split by decade. Injuries and fatalities are summed from each individual event of a given event type. Total injuries and fatalities of all event types are also summed per decade. The total U.S. population per decade is also displayed.
+
+### 3.C Economic Impact Resulting From Weather Events
+
+The total monetary damage of property and crops are plotted across event types in Figure 3.
+    
+
+```r
+# Gather information determining the relationship between event type and property/crop damage in millions of dollars
 economic_by_event <- data.frame(
-    event = c("Coastal","Cold","Heat","Other","Rain","Wind"),
-    usd_mil = tapply(X = data$total_damage, INDEX = data$EVTYPE, FUN = sum) / 1000000)
+  event = c("Coastal","Cold","Heat","Other","Rain","Wind"),
+  usd_mil = tapply(X = data$total_damage, INDEX = data$EVTYPE, FUN = sum) / 1000000)
 
+# Plot
 library(ggplot2)
-
 ggplot(economic_by_event, aes(x = event, y = usd_mil)) + 
   geom_bar(fill = "white", colour = "darkgreen", stat = "identity") +
   labs(x = "Weather Event", y = "Total Property + Crop Damage (in millions of dollars USD)",
-       title = "Cost of Property and Crop Damage per Weather Event\nin the United States (1950-2011)") +
-  geom_text(aes(label = paste("$", formatC(round(usd_mil, digits = 1), format = "d", big.mark = ",", small.mark = ".", width = 2), sep = ""), ymax = 0), size = 5, vjust = -1)
+    title = "Cost of Property and Crop Damage per Weather Event\nin the United States (1950-2011)") +
+  geom_text(aes(
+    label = paste("$", formatC(round(usd_mil, digits = 1), format = "d", big.mark = ",", small.mark = ".", width = 2), sep = ""), ymax = 0),
+    size = 5, vjust = 0)
 ```
 
-![Alt text](https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/fig2.png)
+![Alt text](https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure3.png)
+
+**Figure 3**. Monetary damages in millions of dollars USD for a given event type. Property and crop damages are summed from each individual event of a given event type.
+
+### 3.D Economic Impact Resulting From Weather Events Compared to Annual U.S. Federal Budget From 1950-2011
+
+The total monetary damage of property and crops are plotted across event types by decade in Figure 4. Additionally, information regarding annual U.S. federal budget for each year is also displayed for comparison.
+
+
+```r
+# Additionally, add supplementary information concerning U.S. budget (surplus/deficit) during the year the events took place
+# TO DO: PLOT
+```
+
+![Alt text](https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure4.png)
+
+**Figure 4**. Monetary damages in millions of dollars USD for a given event type split by year. Property and crop damages are summed from each individual event of a given event type. Total monetary damages of all event types are also summed per year. The U.S. federal budget (surplus/deficit) per year is also displayed.
 
 ---
 
 ## 4. Discussion
 
-**1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?**
+**Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?**
 
-**2. Across the United States, which types of events have the greatest economic consequences?**
+**Across the United States, which types of events have the greatest economic consequences?**
 
----
 ---

@@ -192,6 +192,8 @@ hr {
 <body>
 <hr/>
 
+<p><strong>NOTE: I am submitting this early, but seeing how this is a public repository, anyone can see it right away. If you need help, you can use this as a guide to understanding the problem, but please do not just copy/paste this code. R has a steep learning curve, but you will get it with time and experience, I have faith in you.</strong></p>
+
 <h1>Impact Analysis of Severe Weather Events on Population and Economic Health in the United States from 1950-2011</h1>
 
 <hr/>
@@ -200,11 +202,7 @@ hr {
 
 <p>&ldquo;Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.&rdquo;</p>
 
-<p>Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration&#39;s (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), it has been determined that&hellip; INSERT SUMMARY HERE</p>
-
-<p>1.) Which type(s) of weather events is most harmful with respect to U.S. population health and 2.) Which have the greatest economic consequence.</p>
-
-<p><strong>NOTE: Histogram image is not directly embedded since if this document is viewed as an *.md file through GitHub, it will not display, therefore I am sourcing the image through Markdown instead.</strong></p>
+<p>Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration&#39;s (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), types of weather events were examined to determine which were most harmful to U.S. population health and had the greatest national economic consequence.</p>
 
 <hr/>
 
@@ -214,38 +212,25 @@ hr {
 
 <h3>2.A Loading Data</h3>
 
-<ul>
-<li>The original required data file archive <code>repdata-data-StormData.csv.bz2</code> and the prepared compressed <code>repdata-data-StormData.rds</code> is included in the repository</li>
-<li>The following code is to convert the original <code>repdata-data-StormData.csv.bz2</code> to a compressed R object <code>repdata-data-StormData.rds</code>. Since the archive uncompressed is &gt; 100 MB, the following code will download the archive from online, uncompress it locally to home (<code>~/</code>), load the local <code>repdata-data-StormData.csv</code> file into an R object, and then save it out as <code>repdata-data-StormData.rds</code> (which is below the GitHub 100 MB limit):</li>
-</ul>
+<p>The original required data file archive <code>repdata-data-StormData.csv.bz2</code> is downloaded from the course website and uncompressed locally:</p>
 
 <pre><code class="r">setwd(&quot;~/&quot;)
 filepath_source      &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2&quot;
-filename             &lt;- &quot;repdata-data-StormData&quot;
-filepath_destination &lt;- paste(&quot;~/&quot;, filename, sep = &quot;&quot;)
-download.file(url = filepath_source, destfile = paste(filepath_destination, &quot;.csv.bz2&quot;, sep = &quot;&quot;), method = &quot;curl&quot;)
-data                 &lt;- bzfile(description = paste(filepath_destination, &quot;.csv.bz2&quot;, sep = &quot;&quot;))
+filepath_destination &lt;- &quot;~/repdata-data-StormData.csv.bz2&quot;
+download.file(url = filepath_source, destfile = filepath_destination, method = &quot;curl&quot;)
+data                 &lt;- bzfile(description = filepath_destination)
+# This may take a while!!!
 data                 &lt;- read.csv(data, stringsAsFactors = FALSE) # Remember to set stringsAsFactors = FALSE
+# Saving out as compressed R object (*.rds) for convenience (in case the file needs to be loaded again, will take R less time)
 saveRDS(data, &quot;~/repdata-data-StormData.rds&quot;)
-# NOTE: repdata-data-StormData.rds is then uploaded to my GitHub repository
-# We will use this for the remained of the analysis
 </code></pre>
 
-<ul>
-<li>This following code will now load the compressed <code>repdata-data-StormData.rds</code> from GitHub into R.</li>
-</ul>
+<p>Reload the dataset from the R object compressed form:</p>
 
-<pre><code class="r">setwd(&quot;~/&quot;)
-filepath_source      &lt;- &quot;https://raw.github.com/atet/coursera/blob/master/RepData_PeerAssessment2/repdata-data-StormData.rds&quot;
-filename             &lt;- &quot;repdata-data-StormData&quot;
-filepath_destination &lt;- paste(&quot;~/&quot;, filename, sep = &quot;&quot;)
-download.file(url = filepath_source, destfile = paste(filepath_destination, &quot;.rds&quot;, sep = &quot;&quot;), method = &quot;curl&quot;)
-data                 &lt;- readRDS(paste(filepath_destination, &quot;.rds&quot;, sep = &quot;&quot;))
+<pre><code class="r">data &lt;- readRDS(&quot;~/repdata-data-StormData.rds&quot;)
 </code></pre>
 
-<ul>
-<li>This large dataset initially contains 902,297 observations with 37 variables each as seen below:</li>
-</ul>
+<p>This large dataset initially contains 902,297 observations with 37 variables each as seen below:</p>
 
 <pre><code>## &#39;data.frame&#39;:    902297 obs. of  37 variables:
 ##  $ STATE__   : num  1 1 1 1 1 1 1 1 1 1 ...
@@ -287,13 +272,32 @@ data                 &lt;- readRDS(paste(filepath_destination, &quot;.rds&quot;,
 ##  $ REFNUM    : num  1 2 3 4 5 6 7 8 9 10 ...
 </code></pre>
 
+<p>Supplementary data: Census data of U.S. population by county from 1900-1990 from the National Bureau of Economic Research (<a href="http://www.nber.org/census/pop/cencounts.csv">http://www.nber.org/census/pop/cencounts.csv</a>):</p>
+
+<pre><code class="r"># Download file from source to local
+download.file(url = &quot;http://www.nber.org/census/pop/cencounts.csv&quot;, destfile = &quot;~/cencounts.csv&quot;)
+</code></pre>
+
+<pre><code class="r"># Load the downloaded file
+us_county_population &lt;- read.csv(file = &quot;~/cencounts.csv&quot;, stringsAsFactors = FALSE) 
+</code></pre>
+
+<p>Supplementary data: Annual U.S. federal budget expenditures from whitehouse.gov (<a href="http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls">http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls</a>):</p>
+
+<pre><code class="r"># Download file from source to local
+library(xlsx)
+download.file(url = &quot;http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls&quot;, destfile = &quot;~/hist01z1.xls&quot;, method = &quot;curl&quot;)
+</code></pre>
+
+<pre><code class="r"># Load the downloaded file, only load information about year and total surplus/deficit
+us_federal_budget    &lt;- read.xlsx(file = &quot;~/hist01z1.xls&quot;, sheetIndex = 1, startRow = 4, stringsAsFactors = FALSE) 
+</code></pre>
+
 <h3>2.B Cleaning Data</h3>
 
 <p><strong>2.B.i Date and time</strong></p>
 
-<ul>
-<li>Entries are from 16 different time zones:</li>
-</ul>
+<p>Date and time entries are from 16 different time zones, Universal Time Coordinated offsets for each of these timezones were determined from Wikipedia.org (<a href="http://en.wikipedia.org/wiki/Time_zones">http://en.wikipedia.org/wiki/Time_zones</a>):</p>
 
 <pre><code class="r">time_zones &lt;- data.frame(
   &quot;Abbreviation&quot; = c(
@@ -397,11 +401,9 @@ knitr::kable(time_zones)
 </tr>
 </tbody></table>
 
-<ul>
-<li>Create a uniform date/time value in UTC (Universal Time, Coordinated) of <code>POSIX</code> type using the <code>$BGN_DATE</code> and <code>$BGN_TIME</code>:</li>
-</ul>
+<p>Create a uniform date/time value in UTC (Universal Time, Coordinated) of <code>POSIX</code> type using the <code>$BGN_DATE</code> and <code>$BGN_TIME</code>:</p>
 
-<pre><code class="r"># Trim $BGN_DATE since the date is correct, but the trailing time are all irrelevant 0:00:00
+<pre><code class="r"># Trim $BGN_DATE since the date is correct, but the trailing time are all irrelevant &quot;0:00:00&quot;&quot;
 data$date &lt;- gsub(&quot; 0:00:00&quot;, &quot;&quot;, data$BGN_DATE)
 # Clean up timezone $TIME_ZONE, some values need to be changed for consistency
 data$TIME_ZONE[data$TIME_ZONE == &quot;CSt&quot;] = &quot;CST&quot; # Typo
@@ -453,10 +455,9 @@ data$time_utc             &lt;- time_24h
 
 <p><strong>2.B.ii Necessary variables</strong></p>
 
-<ul>
-<li>Subset the source data into only columns that relate to weather event, injury/loss-of-life, and economic impact.</li>
-<li>Including the date of the event cleaned up previously as <code>$time_utc</code>, using the documentation provided by the National Weather Service (<a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf">https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf</a>), the following variables relate to weather event, injury/loss-of-life, or economic impact.</li>
-</ul>
+<p>Subset the source data into only columns that relate to weather event, injury/loss-of-life, and economic impact.</p>
+
+<p>Including the date of the event cleaned up previously as <code>$time_utc</code>, using the documentation provided by the National Weather Service (<a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf">https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf</a>), the following variables relate to weather event, injury/loss-of-life, or economic impact.</p>
 
 <pre><code class="r">variables &lt;- data.frame(
   &quot;Variable&quot; = c(
@@ -510,28 +511,26 @@ knitr::kable(variables)
 </tr>
 </tbody></table>
 
-<ul>
-<li>Subset the main data into the eight variables appropriate for this analysis.</li>
-</ul>
+<p>Subset the main data into the eight variables appropriate for this analysis.</p>
 
 <pre><code class="r">data &lt;- data[ , colnames(data) %in% variables$Variable] 
 </code></pre>
 
 <p><strong>2.B.iii Monetary values</strong></p>
 
-<ul>
-<li>To determine a single monetary value for property and crop damage, <code>$PROPDMG</code>, <code>$PROPDMGEXP</code>, <code>$CROPDMG</code>, and <code>$CROPDMGEXP</code> must be deciphered and combined.</li>
-<li>The <code>$PROPDMG</code> and <code>$CROPDMG</code> values are all numerical, I will assume that the corresponding <code>EXP</code> columns are 10<sup>exponent</sup> multipliers for these values and the value is in U.S dollars.</li>
-<li>Together, <code>$PROPDMGEXP</code> and <code>$CROPDMGEX</code> have 20 unique symbols as multipliers, these need to be harmonized:</li>
-</ul>
+<p>To determine a single monetary value for property and crop damage, <code>$PROPDMG</code>, <code>$PROPDMGEXP</code>, <code>$CROPDMG</code>, and <code>$CROPDMGEXP</code> must be deciphered and combined.</p>
+
+<p>The following information is described in Section 2.7 from <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf">https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf</a>.</p>
+
+<p>The <code>$PROPDMG</code> and <code>$CROPDMG</code> values are all numerical, the corresponding <code>$*EXP</code> columns are 10<sup>exponent</sup> multipliers for these values and the value is in U.S dollars.</p>
+
+<p>Together, <code>$PROPDMGEXP</code> and <code>$CROPDMGEX</code> have 20 unique symbols as multipliers, these need to be harmonized:</p>
 
 <pre><code>##  [1] &quot;&quot;  &quot;K&quot; &quot;M&quot; &quot;B&quot; &quot;+&quot; &quot;0&quot; &quot;m&quot; &quot;5&quot; &quot;6&quot; &quot;?&quot; &quot;1&quot; &quot;3&quot; &quot;4&quot; &quot;2&quot; &quot;7&quot; &quot;H&quot; &quot;8&quot;
 ## [18] &quot;h&quot; &quot;-&quot; &quot;k&quot;
 </code></pre>
 
-<ul>
-<li>I will assume the following about the different exponent symbols:</li>
-</ul>
+<p>Harmonize the different exponent symbols:</p>
 
 <pre><code class="r"># Symbols that are missing (NA), blank (&quot;&quot;), &quot;+&quot;, &quot;-&quot;, or &quot;?&quot; will be replaced with a zero (10^0 = 1)
 data$PROPDMGEXP[is.na(data$PROPDMGEXP) | data$PROPDMGEXP == &quot;&quot; |
@@ -557,17 +556,19 @@ data$total_damage &lt;- (data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))) + (d
 
 <p><strong>2.B.iv Event type</strong></p>
 
-<ul>
-<li>The recorded event types are different between years (source: <a href="http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype">http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype</a>):
+<p>The recorded event types are different between years (source: <a href="http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype">http://www.ncdc.noaa.gov/stormevents/details.jsp?type=eventtype</a>):</p>
 
 <ul>
 <li>1950-1955: Tornadoes</li>
 <li>1955-1996: Tornadoes, thunderstorm winds, and hail</li>
 <li>1996-present: 48 different event types</li>
-</ul></li>
-<li>Initially, there are 985 different unique <code>$EVTYPE</code> which describe the weather event.</li>
-<li>Clearly there are differences between labels and typos present, therefore these labels need to be harmonized.</li>
-<li>I will only consider the following types of events (with priority):
+</ul>
+
+<p>Initially, there are 985 different unique <code>$EVTYPE</code> which describe the weather event.</p>
+
+<p>Clearly there are differences between labels and typos present, therefore these labels need to be harmonized.</p>
+
+<p>I will only consider the following types of events (with priority):</p>
 
 <ol>
 <li>Cold-related (e.g. &ldquo;GROUND BLIZZARD&rdquo;, &ldquo;ICE STORM&rdquo;, &ldquo;RECORD SNOWFALL&rdquo;, etc.)</li>
@@ -576,8 +577,7 @@ data$total_damage &lt;- (data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))) + (d
 <li>Wind-only (e.g. &ldquo;High winds&rdquo;, &ldquo;GUSTNADO&rdquo;, &ldquo;TORNADO&rdquo;, etc.)</li>
 <li>Rain-only (e.g. &ldquo;Mudslides&rdquo;, &ldquo;RAPIDLY RISING WATER&rdquo;, &ldquo;Wet Year&rdquo;, etc.)</li>
 <li>Other, entries with <code>$EVTYPE</code> labels that are incomplete or &ldquo;?&rdquo;, &ldquo;Summary of&hellip;&rdquo;, &ldquo;&quot;No Severe Weather&rdquo;&ldquo;,  etc.</li>
-</ol></li>
-</ul>
+</ol>
 
 <pre><code class="r"># Replace original terms with one of the five terms using regular expressions and list of related words
 # Cold-related events
@@ -625,9 +625,7 @@ print(table(data$EVTYPE))
 ##   19393   49364   33039     208  347186  453107
 </code></pre>
 
-<ul>
-<li>For the purposes of this study, I will now consider the <code>data</code> to be harmonized, clean, and ready for analysis.</li>
-</ul>
+<p><strong>For the purposes of this study, I will now consider the <code>data</code> to be harmonized, clean, and ready for analysis</strong>.</p>
 
 <pre><code>## &#39;data.frame&#39;:    902297 obs. of  9 variables:
 ##  $ EVTYPE      : chr  &quot;heat&quot; &quot;heat&quot; &quot;heat&quot; &quot;rain&quot; ...
@@ -642,17 +640,46 @@ print(table(data$EVTYPE))
 ## NULL
 </code></pre>
 
+<p><strong>2.B.v Supplementary data</strong></p>
+
+<p>Clean up population data: Subset needed rows and columns.</p>
+
+<pre><code class="r"># For this analysis, only considering total U.S. population in row 1 and year 1950-1990 in columns 6:10
+us_county_population &lt;- us_county_population[1,c(6:10)]
+</code></pre>
+
+<p>Clean up budget data: Subset needed columns and years, convert values as stated in the document (values are in millions $ USD).</p>
+
+<pre><code class="r"># Only load information about year and total surplus/deficit (years in column 1 and surplus or deficits in column 4)
+us_federal_budget           &lt;- us_federal_budget[c(1,4)]
+# Change column names
+colnames(us_federal_budget) &lt;- c(&quot;year&quot;,&quot;amount&quot;)
+# Will assume the estimated amounts in the report for 2010-2011 are the actual values
+us_federal_budget[us_federal_budget$year == &quot;2010 estimate&quot;,]$year &lt;- 2010
+us_federal_budget[us_federal_budget$year == &quot;2011 estimate&quot;,]$year &lt;- 2011
+# Subset out years 1950-2011
+us_federal_budget           &lt;- us_federal_budget[us_federal_budget$year &gt;= 1950 &amp; us_federal_budget$year &lt;= 2011,]
+# Coerce both character columns to numeric
+us_federal_budget$year      &lt;- as.numeric(us_federal_budget$year)
+us_federal_budget$amount    &lt;- as.numeric(us_federal_budget$amount)
+# Multiply value by million multiplier (as stated in the document, values are in millions)
+us_federal_budget$amount    &lt;- us_federal_budget$amount * 1000000
+# Erase rownames
+rownames(us_federal_budget) &lt;- NULL
+</code></pre>
+
 <hr/>
 
 <h2>3. Results</h2>
 
+<p><strong>NOTE: Histogram image is not directly embedded since if this document is viewed as an .md file through GitHub, it will not display, therefore I am sourcing the image through Markdown instead.</strong></p>
+
 <h3>3.A Population Health Impact Resulting From Weather Events</h3>
 
-<ul>
-<li>INSERT DESCRIPTION</li>
-</ul>
+<p>The number of injuries and fatalities are plotted across event types in Figure 1.</p>
 
-<pre><code class="r">health_by_event &lt;- rbind(
+<pre><code class="r"># Gather information determining the relationship between event type with injuries and fatalities
+health_by_event &lt;- rbind(
   data.frame(
     event = c(&quot;Coastal&quot;,&quot;Cold&quot;,&quot;Heat&quot;,&quot;Other&quot;,&quot;Rain&quot;,&quot;Wind&quot;),
     count = tapply(X = data$INJURIES, INDEX = data$EVTYPE, FUN = sum),
@@ -662,48 +689,109 @@ print(table(data$EVTYPE))
     count = tapply(X = data$FATALITIES, INDEX = data$EVTYPE, FUN = sum),
     type = &quot;Fatality&quot;))
 
+# Plot
 library(ggplot2)
-
 ggplot(health_by_event, aes(x = event, y = count, fill = type)) + 
   geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
   labs(x = &quot;Weather Event&quot;, y = &quot;Counts&quot;,
-       title = &quot;Number of Injury/Fatalities per Weather Event\nin the United States (1950-2011)&quot;) +
+    title = &quot;Number of Injury/Fatalities per Weather Event\nin the United States (1950-2011)&quot;) +
   scale_fill_discrete(name = &quot;Health Impact\nType&quot;) +
-  geom_text(aes(label = formatC(round(count, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), ymax = 0), size = 5, position = position_dodge(width = 1), vjust = -1)
+  geom_text(aes(
+    label = formatC(round(count, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), ymax = 0),
+    size = 5, position = position_dodge(width = 1), vjust = 0)
 </code></pre>
 
-<p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/fig1.png" alt="Alt text"/></p>
+<p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure1.png" alt="Alt text"/></p>
 
-<h3>3.B Economic Impact Resulting From Weather Events</h3>
+<p><strong>Figure 1</strong>. Number of injuries and fatalities for a given event type. Injuries and fatalities are summed from each individual event of a given event type.</p>
 
-<ul>
-<li>INSERT DESCRIPTION</li>
-</ul>
+<h3>3.B Population Health Impact Resulting From Weather Events Compared to Total U.S. Population Across Decades From 1950-1990</h3>
 
-<pre><code class="r">economic_by_event &lt;- data.frame(
-    event = c(&quot;Coastal&quot;,&quot;Cold&quot;,&quot;Heat&quot;,&quot;Other&quot;,&quot;Rain&quot;,&quot;Wind&quot;),
-    usd_mil = tapply(X = data$total_damage, INDEX = data$EVTYPE, FUN = sum) / 1000000)
+<p>The number of injuries and fatalities are plotted across event types by decade in Figure 2. Additionally, information regarding total U.S. population for each decade is used to normalize. Since the census data was limited to 1900-1990 and the event data only contained <code>wind</code> or <code>rain</code> catergorized events from 1950s-1990&#39;s, I will only look into dates from 1950-1999 and these two event types.  </p>
 
+<pre><code class="r"># Additionally, add supplementary information concerning U.S. population counts during the decade of the event
+# Subset to just wind and rain event types
+data_by_decade        &lt;- data[data$EVTYPE == &quot;rain&quot; | data$EVTYPE == &quot;wind&quot;,]
+# Make column for decade
+data_by_decade$decade &lt;- floor(as.numeric(format(x = data_by_decade$time_utc, format = &quot;%y&quot;)) / 10)
+# Subset data with relevant decade range from census data, 1950-1999
+data_by_decade        &lt;- data_by_decade[data_by_decade$decade &gt;= 5 &amp; data_by_decade$decade &lt;= 9,]
+# Using census data by decade, determine percentage of total U.S. population injured of killed.
+# Since the total U.S. population is far greater than the number of injuries/fatalities, will consider
+# using the full population value (may/may not already account for the deaths from these event)
+data_by_decade$decade_population &lt;- NA
+data_by_decade[data_by_decade$decade == 5,]$decade_population &lt;- us_county_population[[1]] # 1950&#39;s
+data_by_decade[data_by_decade$decade == 6,]$decade_population &lt;- us_county_population[[2]] # 1960&#39;s
+data_by_decade[data_by_decade$decade == 7,]$decade_population &lt;- us_county_population[[3]] # 1970&#39;s
+data_by_decade[data_by_decade$decade == 8,]$decade_population &lt;- us_county_population[[4]] # 1980&#39;s
+data_by_decade[data_by_decade$decade == 9,]$decade_population &lt;- us_county_population[[5]] # 1990&#39;s
+data_by_decade$decade_population &lt;- as.numeric(data_by_decade$decade_population)
+# Determine percentage of population (of that decade) injured or killed per event.
+data_by_decade$injuries_pop_percent   &lt;- (data_by_decade$INJURIES / data_by_decade$decade_population) * 100
+data_by_decade$fatalities_pop_percent &lt;- (data_by_decade$FATALITIES / data_by_decade$decade_population) * 100
+
+# Determine total injuries and fatalities percentages for each decade
+data_by_decade   &lt;- data_by_decade[order(data_by_decade$decade),]
+health_by_decade &lt;- rbind(
+  data.frame(
+    decade = c(&quot;1950&#39;s&quot;,&quot;1960&#39;s&quot;,&quot;1970&#39;s&quot;,&quot;1980&#39;s&quot;,&quot;1990&#39;s&quot;),
+    count = tapply(X = data_by_decade$injuries_pop_percent, INDEX = list(data_by_decade$decade, data_by_decade$EVTYPE), FUN = sum),
+    type = &quot;Injury&quot;),
+  data.frame(
+    decade = c(&quot;1950&#39;s&quot;,&quot;1960&#39;s&quot;,&quot;1970&#39;s&quot;,&quot;1980&#39;s&quot;,&quot;1990&#39;s&quot;),
+    count = tapply(X = data_by_decade$fatalities_pop_percent, INDEX = list(data_by_decade$decade, data_by_decade$EVTYPE), FUN = sum),
+    type = &quot;Fatality&quot;))
+
+# TO DO: PLOT
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure2.png" alt="Alt text"/></p>
+
+<p><strong>Figure 2</strong>. Number of injuries and fatalities for a given event type split by decade. Injuries and fatalities are summed from each individual event of a given event type. Total injuries and fatalities of all event types are also summed per decade. The total U.S. population per decade is also displayed.</p>
+
+<h3>3.C Economic Impact Resulting From Weather Events</h3>
+
+<p>The total monetary damage of property and crops are plotted across event types in Figure 3.</p>
+
+<pre><code class="r"># Gather information determining the relationship between event type and property/crop damage in millions of dollars
+economic_by_event &lt;- data.frame(
+  event = c(&quot;Coastal&quot;,&quot;Cold&quot;,&quot;Heat&quot;,&quot;Other&quot;,&quot;Rain&quot;,&quot;Wind&quot;),
+  usd_mil = tapply(X = data$total_damage, INDEX = data$EVTYPE, FUN = sum) / 1000000)
+
+# Plot
 library(ggplot2)
-
 ggplot(economic_by_event, aes(x = event, y = usd_mil)) + 
   geom_bar(fill = &quot;white&quot;, colour = &quot;darkgreen&quot;, stat = &quot;identity&quot;) +
   labs(x = &quot;Weather Event&quot;, y = &quot;Total Property + Crop Damage (in millions of dollars USD)&quot;,
-       title = &quot;Cost of Property and Crop Damage per Weather Event\nin the United States (1950-2011)&quot;) +
-  geom_text(aes(label = paste(&quot;$&quot;, formatC(round(usd_mil, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), sep = &quot;&quot;), ymax = 0), size = 5, vjust = -1)
+    title = &quot;Cost of Property and Crop Damage per Weather Event\nin the United States (1950-2011)&quot;) +
+  geom_text(aes(
+    label = paste(&quot;$&quot;, formatC(round(usd_mil, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), sep = &quot;&quot;), ymax = 0),
+    size = 5, vjust = 0)
 </code></pre>
 
-<p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/fig2.png" alt="Alt text"/></p>
+<p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure3.png" alt="Alt text"/></p>
+
+<p><strong>Figure 3</strong>. Monetary damages in millions of dollars USD for a given event type. Property and crop damages are summed from each individual event of a given event type.</p>
+
+<h3>3.D Economic Impact Resulting From Weather Events Compared to Annual U.S. Federal Budget From 1950-2011</h3>
+
+<p>The total monetary damage of property and crops are plotted across event types by decade in Figure 4. Additionally, information regarding annual U.S. federal budget for each year is also displayed for comparison.</p>
+
+<pre><code class="r"># Additionally, add supplementary information concerning U.S. budget (surplus/deficit) during the year the events took place
+# TO DO: PLOT
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure4.png" alt="Alt text"/></p>
+
+<p><strong>Figure 4</strong>. Monetary damages in millions of dollars USD for a given event type split by year. Property and crop damages are summed from each individual event of a given event type. Total monetary damages of all event types are also summed per year. The U.S. federal budget (surplus/deficit) per year is also displayed.</p>
 
 <hr/>
 
 <h2>4. Discussion</h2>
 
-<p><strong>1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</strong></p>
+<p><strong>Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</strong></p>
 
-<p><strong>2. Across the United States, which types of events have the greatest economic consequences?</strong></p>
-
-<hr/>
+<p><strong>Across the United States, which types of events have the greatest economic consequences?</strong></p>
 
 <hr/>
 

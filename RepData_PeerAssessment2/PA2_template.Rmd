@@ -9,7 +9,7 @@ output: html_document
 
 **NOTE: I am submitting this early, but seeing how this is a public repository, anyone can see it right away. If you need help, you can use this as a guide to understanding the problem, but please do not just copy/paste this code. R has a steep learning curve, but you will get it with time and experience, I have faith in you.**
 
-# Impact Analysis of Severe Weather Events on Population and Economic Health in the United States from 1950-2011
+# Impact Analysis of Severe Weather Events on Population and Economic Health in the United States: Wind- and Rain-related Most Damaging from 1950-2011
 
 ---
 
@@ -17,7 +17,7 @@ output: html_document
 
 "Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern."
 
-Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), types of weather events were examined to determine which were most harmful to U.S. population health and had the greatest national economic consequence.
+Here, using the dataset from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database (which tracks characteristics of major storms and weather events in the United States, including dates, locations, and estimates of any fatalities, injuries, and property damage), types of weather events were examined to determine which were most harmful to U.S. population health and had the greatest national economic consequence. According to the data, wind-related events have impacted the population the most while rain-related events have resulted in the most crop and property damages.
 
 ---
 

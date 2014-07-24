@@ -279,18 +279,7 @@ download.file(url = &quot;http://www.nber.org/census/pop/cencounts.csv&quot;, de
 </code></pre>
 
 <pre><code class="r"># Load the downloaded file
-us_county_population &lt;- read.csv(file = &quot;~/cencounts.csv&quot;, stringsAsFactors = FALSE) 
-</code></pre>
-
-<p>Supplementary data: Annual U.S. federal budget expenditures from whitehouse.gov (<a href="http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls">http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls</a>):</p>
-
-<pre><code class="r"># Download file from source to local
-library(xlsx)
-download.file(url = &quot;http://www.whitehouse.gov/sites/default/files/omb/budget/fy2011/assets/hist01z1.xls&quot;, destfile = &quot;~/hist01z1.xls&quot;, method = &quot;curl&quot;)
-</code></pre>
-
-<pre><code class="r"># Load the downloaded file, only load information about year and total surplus/deficit
-us_federal_budget    &lt;- read.xlsx(file = &quot;~/hist01z1.xls&quot;, sheetIndex = 1, startRow = 4, stringsAsFactors = FALSE) 
+us_population &lt;- read.csv(file = &quot;~/cencounts.csv&quot;, stringsAsFactors = FALSE) 
 </code></pre>
 
 <h3>2.B Cleaning Data</h3>
@@ -550,8 +539,12 @@ data$CROPDMGEXP[data$CROPDMGEXP == &quot;m&quot; | data$CROPDMGEXP == &quot;M&qu
 data$PROPDMGEXP[data$PROPDMGEXP == &quot;b&quot; | data$PROPDMGEXP == &quot;B&quot;] &lt;- 9
 data$CROPDMGEXP[data$CROPDMGEXP == &quot;b&quot; | data$CROPDMGEXP == &quot;B&quot;] &lt;- 9
 # The remaining symbols are already numberic and assumed correct exponents
+# Make column $total_crop_damage
+data$total_crop_damage &lt;- data$CROPDMG * (10 ^ as.numeric(data$CROPDMGEXP))
+# Make column $total_property_damage
+data$total_property_damage &lt;- data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))
 # Make column $total_damage that combines the total property and crop damage
-data$total_damage &lt;- (data$PROPDMG * (10 ^ as.numeric(data$PROPDMGEXP))) + (data$CROPDMG * (10 ^ as.numeric(data$CROPDMGEXP)))
+data$total_damage &lt;- data$total_crop_damage + data$total_property_damage
 </code></pre>
 
 <p><strong>2.B.iv Event type</strong></p>
@@ -627,16 +620,18 @@ print(table(data$EVTYPE))
 
 <p><strong>For the purposes of this study, I will now consider the <code>data</code> to be harmonized, clean, and ready for analysis</strong>.</p>
 
-<pre><code>## &#39;data.frame&#39;:    902297 obs. of  9 variables:
-##  $ EVTYPE      : chr  &quot;heat&quot; &quot;heat&quot; &quot;heat&quot; &quot;rain&quot; ...
-##  $ FATALITIES  : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ INJURIES    : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ PROPDMG     : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ PROPDMGEXP  : chr  &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
-##  $ CROPDMG     : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ CROPDMGEXP  : chr  &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
-##  $ time_utc    : POSIXlt, format: &quot;1994-10-01 09:00:00&quot; &quot;1993-09-05 18:00:00&quot; ...
-##  $ total_damage: num  0 0 0 0 0 0 0 0 0 0 ...
+<pre><code>## &#39;data.frame&#39;:    902297 obs. of  11 variables:
+##  $ EVTYPE               : chr  &quot;heat&quot; &quot;heat&quot; &quot;heat&quot; &quot;rain&quot; ...
+##  $ FATALITIES           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ INJURIES             : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ PROPDMG              : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ PROPDMGEXP           : chr  &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
+##  $ CROPDMG              : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ CROPDMGEXP           : chr  &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
+##  $ time_utc             : POSIXlt, format: &quot;1994-10-01 09:00:00&quot; &quot;1993-09-05 18:00:00&quot; ...
+##  $ total_crop_damage    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ total_property_damage: num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ total_damage         : num  0 0 0 0 0 0 0 0 0 0 ...
 ## NULL
 </code></pre>
 
@@ -645,27 +640,7 @@ print(table(data$EVTYPE))
 <p>Clean up population data: Subset needed rows and columns.</p>
 
 <pre><code class="r"># For this analysis, only considering total U.S. population in row 1 and year 1950-1990 in columns 6:10
-us_county_population &lt;- us_county_population[1,c(6:10)]
-</code></pre>
-
-<p>Clean up budget data: Subset needed columns and years, convert values as stated in the document (values are in millions $ USD).</p>
-
-<pre><code class="r"># Only load information about year and total surplus/deficit (years in column 1 and surplus or deficits in column 4)
-us_federal_budget           &lt;- us_federal_budget[c(1,4)]
-# Change column names
-colnames(us_federal_budget) &lt;- c(&quot;year&quot;,&quot;amount&quot;)
-# Will assume the estimated amounts in the report for 2010-2011 are the actual values
-us_federal_budget[us_federal_budget$year == &quot;2010 estimate&quot;,]$year &lt;- 2010
-us_federal_budget[us_federal_budget$year == &quot;2011 estimate&quot;,]$year &lt;- 2011
-# Subset out years 1950-2011
-us_federal_budget           &lt;- us_federal_budget[us_federal_budget$year &gt;= 1950 &amp; us_federal_budget$year &lt;= 2011,]
-# Coerce both character columns to numeric
-us_federal_budget$year      &lt;- as.numeric(us_federal_budget$year)
-us_federal_budget$amount    &lt;- as.numeric(us_federal_budget$amount)
-# Multiply value by million multiplier (as stated in the document, values are in millions)
-us_federal_budget$amount    &lt;- us_federal_budget$amount * 1000000
-# Erase rownames
-rownames(us_federal_budget) &lt;- NULL
+us_population &lt;- us_population[1,c(6:10)]
 </code></pre>
 
 <hr/>
@@ -689,12 +664,12 @@ health_by_event &lt;- rbind(
     count = tapply(X = data$FATALITIES, INDEX = data$EVTYPE, FUN = sum),
     type = &quot;Fatality&quot;))
 
-# Plot
+# Plot injuries/fatalities by event type
 library(ggplot2)
 ggplot(health_by_event, aes(x = event, y = count, fill = type)) + 
   geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
   labs(x = &quot;Weather Event&quot;, y = &quot;Counts&quot;,
-    title = &quot;Number of Injury/Fatalities per Weather Event\nin the United States (1950-2011)&quot;) +
+    title = &quot;Number of Injuries and Fatalities per Weather Event\nin the United States (1950-2011)&quot;) +
   scale_fill_discrete(name = &quot;Health Impact\nType&quot;) +
   geom_text(aes(
     label = formatC(round(count, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), ymax = 0),
@@ -707,7 +682,7 @@ ggplot(health_by_event, aes(x = event, y = count, fill = type)) +
 
 <h3>3.B Population Health Impact Resulting From Weather Events Compared to Total U.S. Population Across Decades From 1950-1990</h3>
 
-<p>The number of injuries and fatalities are plotted across event types by decade in Figure 2. Additionally, information regarding total U.S. population for each decade is used to normalize. Since the census data was limited to 1900-1990 and the event data only contained <code>wind</code> or <code>rain</code> catergorized events from 1950s-1990&#39;s, I will only look into dates from 1950-1999 and these two event types.  </p>
+<p>The number of injuries and fatalities are plotted across event types by decade in Figure 2. Additionally, information regarding total U.S. population for each decade is used to normalize. Since the census data was limited to 1900-1990 and the event data only contained <code>wind</code> or <code>rain</code> catergorized events from 1950s-1990&#39;s, <strong>therefore I will only look into dates from 1950-1999 and these two event types</strong>.  </p>
 
 <pre><code class="r"># Additionally, add supplementary information concerning U.S. population counts during the decade of the event
 # Subset to just wind and rain event types
@@ -720,11 +695,11 @@ data_by_decade        &lt;- data_by_decade[data_by_decade$decade &gt;= 5 &amp; d
 # Since the total U.S. population is far greater than the number of injuries/fatalities, will consider
 # using the full population value (may/may not already account for the deaths from these event)
 data_by_decade$decade_population &lt;- NA
-data_by_decade[data_by_decade$decade == 5,]$decade_population &lt;- us_county_population[[1]] # 1950&#39;s
-data_by_decade[data_by_decade$decade == 6,]$decade_population &lt;- us_county_population[[2]] # 1960&#39;s
-data_by_decade[data_by_decade$decade == 7,]$decade_population &lt;- us_county_population[[3]] # 1970&#39;s
-data_by_decade[data_by_decade$decade == 8,]$decade_population &lt;- us_county_population[[4]] # 1980&#39;s
-data_by_decade[data_by_decade$decade == 9,]$decade_population &lt;- us_county_population[[5]] # 1990&#39;s
+data_by_decade[data_by_decade$decade == 5,]$decade_population &lt;- us_population[[1]] # 1950&#39;s
+data_by_decade[data_by_decade$decade == 6,]$decade_population &lt;- us_population[[2]] # 1960&#39;s
+data_by_decade[data_by_decade$decade == 7,]$decade_population &lt;- us_population[[3]] # 1970&#39;s
+data_by_decade[data_by_decade$decade == 8,]$decade_population &lt;- us_population[[4]] # 1980&#39;s
+data_by_decade[data_by_decade$decade == 9,]$decade_population &lt;- us_population[[5]] # 1990&#39;s
 data_by_decade$decade_population &lt;- as.numeric(data_by_decade$decade_population)
 # Determine percentage of population (of that decade) injured or killed per event.
 data_by_decade$injuries_pop_percent   &lt;- (data_by_decade$INJURIES / data_by_decade$decade_population) * 100
@@ -742,54 +717,97 @@ health_by_decade &lt;- rbind(
     count = tapply(X = data_by_decade$fatalities_pop_percent, INDEX = list(data_by_decade$decade, data_by_decade$EVTYPE), FUN = sum),
     type = &quot;Fatality&quot;))
 
-# TO DO: PLOT
+# Melt health_by_decade from wide to long
+library(reshape2)
+health_by_decade_long &lt;- melt(health_by_decade, id.vars=c(&quot;decade&quot;,&quot;type&quot;))
+# Make new variable for plot to fill by (combines $type and $variable)
+health_by_decade_long$type_var &lt;- paste(health_by_decade_long$type, health_by_decade_long$variable, sep = &quot;_&quot;)
+# Make $type_var and ordered factor for grouping them by type in plot
+health_by_decade_long &lt;- health_by_decade_long 
+health_by_decade_long$type_var &lt;- factor(health_by_decade_long$type_var, levels = c(&quot;Injury_count.rain&quot;, &quot;Fatality_count.rain&quot;, &quot;Injury_count.wind&quot;, &quot;Fatality_count.wind&quot;), ordered = TRUE)
+
+str(health_by_decade_long)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    20 obs. of  5 variables:
+##  $ decade  : Factor w/ 5 levels &quot;1950&#39;s&quot;,&quot;1960&#39;s&quot;,..: 1 2 3 4 5 1 2 3 4 5 ...
+##  $ type    : Factor w/ 2 levels &quot;Injury&quot;,&quot;Fatality&quot;: 1 1 1 1 1 2 2 2 2 2 ...
+##  $ variable: Factor w/ 2 levels &quot;count.rain&quot;,&quot;count.wind&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ value   : num  0 0 0 0.000098 0.003086 ...
+##  $ type_var: Ord.factor w/ 4 levels &quot;Injury_count.rain&quot;&lt;..: 1 1 1 1 1 2 2 2 2 2 ...
+</code></pre>
+
+<pre><code class="r"># Plot percent of U.S. population injured/killed from rain or wind events by decade
+library(ggplot2)
+ggplot(health_by_decade_long, aes(x = decade, y = value, fill = type_var)) + 
+  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
+  labs(x = &quot;Decade&quot;, y = &quot;Percentage of Total U.S.\nPopulation for Given Decade&quot;,
+    title = &quot;Percent of U.S. Population impacted by Rain and Wind Events by Decade (1950&#39;s-1990&#39;s)&quot;) +
+  scale_fill_discrete(name = &quot;Health Impact\nType &amp; Event\nType&quot;) +
+  geom_text(aes(
+    label = paste(round(value, digits = 4), &quot; %&quot;), ymax = 0),
+    size = 5, position = position_dodge(width = 1), vjust = 0)
 </code></pre>
 
 <p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure2.png" alt="Alt text"/></p>
 
-<p><strong>Figure 2</strong>. Number of injuries and fatalities for a given event type split by decade. Injuries and fatalities are summed from each individual event of a given event type. Total injuries and fatalities of all event types are also summed per decade. The total U.S. population per decade is also displayed.</p>
+<p><strong>Figure 2</strong>. Number of injuries and fatalities for rain and wind event types split by decade. Total injuries and fatalities are summed from each individual event of a given event type by decade. Y-axis values are the percentage of the total U.S. population the event affected during the decade the event took place.</p>
 
 <h3>3.C Economic Impact Resulting From Weather Events</h3>
 
 <p>The total monetary damage of property and crops are plotted across event types in Figure 3.</p>
 
 <pre><code class="r"># Gather information determining the relationship between event type and property/crop damage in millions of dollars
-economic_by_event &lt;- data.frame(
+economic_by_event_crop &lt;- data.frame(
+  event = c(&quot;Coastal&quot;,&quot;Cold&quot;,&quot;Heat&quot;,&quot;Other&quot;,&quot;Rain&quot;,&quot;Wind&quot;),
+  usd_mil = tapply(X = data$total_crop_damage, INDEX = data$EVTYPE, FUN = sum) / 1000000)
+
+economic_by_event_property &lt;- data.frame(
+  event = c(&quot;Coastal&quot;,&quot;Cold&quot;,&quot;Heat&quot;,&quot;Other&quot;,&quot;Rain&quot;,&quot;Wind&quot;),
+  usd_mil = tapply(X = data$total_property_damage, INDEX = data$EVTYPE, FUN = sum) / 1000000)
+
+economic_by_event_total &lt;- data.frame(
   event = c(&quot;Coastal&quot;,&quot;Cold&quot;,&quot;Heat&quot;,&quot;Other&quot;,&quot;Rain&quot;,&quot;Wind&quot;),
   usd_mil = tapply(X = data$total_damage, INDEX = data$EVTYPE, FUN = sum) / 1000000)
 
-# Plot
+# Plot for property/crop/total damage by event type
 library(ggplot2)
-ggplot(economic_by_event, aes(x = event, y = usd_mil)) + 
+plot_crop &lt;- ggplot(economic_by_event_crop, aes(x = event, y = usd_mil)) + 
+  geom_bar(fill = &quot;white&quot;, colour = &quot;darkgreen&quot;, stat = &quot;identity&quot;) +
+  labs(x = &quot;Weather Event&quot;, y = &quot;Total Crop Damage (in millions of dollars USD)&quot;,
+    title = &quot;Cost of Crop Damage per Weather Event\nin the United States (1950-2011)&quot;) +
+  geom_text(aes(
+    label = paste(&quot;$&quot;, formatC(round(usd_mil, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), sep = &quot;&quot;), ymax = 0),
+    size = 5, vjust = 0)
+plot_property &lt;- ggplot(economic_by_event_property, aes(x = event, y = usd_mil)) + 
+  geom_bar(fill = &quot;white&quot;, colour = &quot;darkgreen&quot;, stat = &quot;identity&quot;) +
+  labs(x = &quot;Weather Event&quot;, y = &quot;Total Property Damage (in millions of dollars USD)&quot;,
+    title = &quot;Cost of Property Damage per Weather Event\nin the United States (1950-2011)&quot;) +
+  geom_text(aes(
+    label = paste(&quot;$&quot;, formatC(round(usd_mil, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), sep = &quot;&quot;), ymax = 0),
+    size = 5, vjust = 0)
+plot_total &lt;- ggplot(economic_by_event_total, aes(x = event, y = usd_mil)) + 
   geom_bar(fill = &quot;white&quot;, colour = &quot;darkgreen&quot;, stat = &quot;identity&quot;) +
   labs(x = &quot;Weather Event&quot;, y = &quot;Total Property + Crop Damage (in millions of dollars USD)&quot;,
     title = &quot;Cost of Property and Crop Damage per Weather Event\nin the United States (1950-2011)&quot;) +
   geom_text(aes(
     label = paste(&quot;$&quot;, formatC(round(usd_mil, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), sep = &quot;&quot;), ymax = 0),
     size = 5, vjust = 0)
+# Make a single plot with all three plots together
+library(gridExtra)
+print(arrangeGrob(plot_crop ,plot_property, plot_total, ncol=3))
 </code></pre>
 
 <p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure3.png" alt="Alt text"/></p>
 
 <p><strong>Figure 3</strong>. Monetary damages in millions of dollars USD for a given event type. Property and crop damages are summed from each individual event of a given event type.</p>
 
-<h3>3.D Economic Impact Resulting From Weather Events Compared to Annual U.S. Federal Budget From 1950-2011</h3>
-
-<p>The total monetary damage of property and crops are plotted across event types by decade in Figure 4. Additionally, information regarding annual U.S. federal budget for each year is also displayed for comparison.</p>
-
-<pre><code class="r"># Additionally, add supplementary information concerning U.S. budget (surplus/deficit) during the year the events took place
-# TO DO: PLOT
-</code></pre>
-
-<p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure4.png" alt="Alt text"/></p>
-
-<p><strong>Figure 4</strong>. Monetary damages in millions of dollars USD for a given event type split by year. Property and crop damages are summed from each individual event of a given event type. Total monetary damages of all event types are also summed per year. The U.S. federal budget (surplus/deficit) per year is also displayed.</p>
-
 <hr/>
 
 <h2>4. Discussion</h2>
 
-<p><strong>Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</strong></p>
+<p><strong>Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</strong>
+Comparing the NOAA weather event dataset to U.S. Census population values, we can see that wind type events caused a larger impact to population health by decade when only considering rain and wind events and decades from 1950-1990. With more current U.S. Census data and more detailed pre-1996 NOAA event data, a more thorough analysis could be performed.</p>
 
 <p><strong>Across the United States, which types of events have the greatest economic consequences?</strong></p>
 

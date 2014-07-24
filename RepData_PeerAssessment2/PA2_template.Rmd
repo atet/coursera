@@ -1,15 +1,6 @@
----
-title: "Reproducible Research: Peer Assessment 2"
-author: "GitHub: atet"
-date: "July 14, 2014"
-output: html_document
----
-
----
+# Impact Analysis of Severe Weather Events on Population and Economic Health in the United States: Wind- and Rain-related Most Damaging from 1950-2011
 
 **NOTE: I am submitting this early, but seeing how this is a public repository, anyone can see it right away. If you need help, you can use this as a guide to understanding the problem, but please do not just copy/paste this code. R has a steep learning curve, but you will get it with time and experience, I have faith in you.**
-
-# Impact Analysis of Severe Weather Events on Population and Economic Health in the United States: Wind- and Rain-related Most Damaging from 1950-2011
 
 ---
 

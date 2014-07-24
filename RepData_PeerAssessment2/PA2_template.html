@@ -742,7 +742,7 @@ library(ggplot2)
 ggplot(health_by_decade_long, aes(x = decade, y = value, fill = type_var)) + 
   geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
   labs(x = &quot;Decade&quot;, y = &quot;Percentage of Total U.S.\nPopulation for Given Decade&quot;,
-    title = &quot;Percent of U.S. Population impacted by Rain and Wind Events by Decade (1950&#39;s-1990&#39;s)&quot;) +
+    title = &quot;Percent of U.S. Population impacted by Rain and\nWind Events by Decade (1950&#39;s-1990&#39;s)&quot;) +
   scale_fill_discrete(name = &quot;Health Impact\nType &amp; Event\nType&quot;) +
   geom_text(aes(
     label = paste(round(value, digits = 4), &quot; %&quot;), ymax = 0),
@@ -775,27 +775,27 @@ library(ggplot2)
 plot_crop &lt;- ggplot(economic_by_event_crop, aes(x = event, y = usd_mil)) + 
   geom_bar(fill = &quot;white&quot;, colour = &quot;darkgreen&quot;, stat = &quot;identity&quot;) +
   labs(x = &quot;Weather Event&quot;, y = &quot;Total Crop Damage (in millions of dollars USD)&quot;,
-    title = &quot;Cost of Crop Damage per Weather Event\nin the United States (1950-2011)&quot;) +
+    title = &quot;Crop&quot;) +
   geom_text(aes(
     label = paste(&quot;$&quot;, formatC(round(usd_mil, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), sep = &quot;&quot;), ymax = 0),
     size = 5, vjust = 0)
 plot_property &lt;- ggplot(economic_by_event_property, aes(x = event, y = usd_mil)) + 
   geom_bar(fill = &quot;white&quot;, colour = &quot;darkgreen&quot;, stat = &quot;identity&quot;) +
   labs(x = &quot;Weather Event&quot;, y = &quot;Total Property Damage (in millions of dollars USD)&quot;,
-    title = &quot;Cost of Property Damage per Weather Event\nin the United States (1950-2011)&quot;) +
+    title = &quot;Property&quot;) +
   geom_text(aes(
     label = paste(&quot;$&quot;, formatC(round(usd_mil, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), sep = &quot;&quot;), ymax = 0),
     size = 5, vjust = 0)
 plot_total &lt;- ggplot(economic_by_event_total, aes(x = event, y = usd_mil)) + 
   geom_bar(fill = &quot;white&quot;, colour = &quot;darkgreen&quot;, stat = &quot;identity&quot;) +
   labs(x = &quot;Weather Event&quot;, y = &quot;Total Property + Crop Damage (in millions of dollars USD)&quot;,
-    title = &quot;Cost of Property and Crop Damage per Weather Event\nin the United States (1950-2011)&quot;) +
+    title = &quot;Total&quot;) +
   geom_text(aes(
     label = paste(&quot;$&quot;, formatC(round(usd_mil, digits = 1), format = &quot;d&quot;, big.mark = &quot;,&quot;, small.mark = &quot;.&quot;, width = 2), sep = &quot;&quot;), ymax = 0),
     size = 5, vjust = 0)
 # Make a single plot with all three plots together
 library(gridExtra)
-print(arrangeGrob(plot_crop ,plot_property, plot_total, ncol=3))
+print(arrangeGrob(plot_crop ,plot_property, plot_total, ncol=3, main = &quot;\nCost of Damage per Weather Event in the United States (1950-2011)&quot;))
 </code></pre>
 
 <p><img src="https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure3.png" alt="Alt text"/></p>
@@ -806,10 +806,13 @@ print(arrangeGrob(plot_crop ,plot_property, plot_total, ncol=3))
 
 <h2>4. Discussion</h2>
 
-<p><strong>Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</strong>
-Comparing the NOAA weather event dataset to U.S. Census population values, we can see that wind type events caused a larger impact to population health by decade when only considering rain and wind events and decades from 1950-1990. With more current U.S. Census data and more detailed pre-1996 NOAA event data, a more thorough analysis could be performed.</p>
+<p><strong>Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</strong></p>
+
+<p>Comparing the NOAA weather event dataset to U.S. Census population values, we can see that wind type events caused a larger impact to population health by decade when only considering rain and wind events and decades from 1950-1990. With more current U.S. Census data and more detailed pre-1996 NOAA event data, a more thorough analysis could be performed.</p>
 
 <p><strong>Across the United States, which types of events have the greatest economic consequences?</strong></p>
+
+<p>From the NOAA weather event dataset, we see that rain-related weather events have caused more total damage than other events for property and property+crop damages from 1950-2011. For total crop damages during that time, heat-related weather events resulted in the most damage. With more detailed pre-1996 NOAA event data, a more thorough analysis could be performed.</p>
 
 <hr/>
 

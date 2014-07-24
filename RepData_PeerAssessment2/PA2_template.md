@@ -497,7 +497,7 @@ library(ggplot2)
 ggplot(health_by_decade_long, aes(x = decade, y = value, fill = type_var)) + 
   geom_bar(position = "dodge", stat = "identity") +
   labs(x = "Decade", y = "Percentage of Total U.S.\nPopulation for Given Decade",
-    title = "Percent of U.S. Population impacted by Rain and Wind Events by Decade (1950's-1990's)") +
+    title = "Percent of U.S. Population impacted by Rain and\nWind Events by Decade (1950's-1990's)") +
   scale_fill_discrete(name = "Health Impact\nType & Event\nType") +
   geom_text(aes(
     label = paste(round(value, digits = 4), " %"), ymax = 0),
@@ -532,27 +532,27 @@ library(ggplot2)
 plot_crop <- ggplot(economic_by_event_crop, aes(x = event, y = usd_mil)) + 
   geom_bar(fill = "white", colour = "darkgreen", stat = "identity") +
   labs(x = "Weather Event", y = "Total Crop Damage (in millions of dollars USD)",
-    title = "Cost of Crop Damage per Weather Event\nin the United States (1950-2011)") +
+    title = "Crop") +
   geom_text(aes(
     label = paste("$", formatC(round(usd_mil, digits = 1), format = "d", big.mark = ",", small.mark = ".", width = 2), sep = ""), ymax = 0),
     size = 5, vjust = 0)
 plot_property <- ggplot(economic_by_event_property, aes(x = event, y = usd_mil)) + 
   geom_bar(fill = "white", colour = "darkgreen", stat = "identity") +
   labs(x = "Weather Event", y = "Total Property Damage (in millions of dollars USD)",
-    title = "Cost of Property Damage per Weather Event\nin the United States (1950-2011)") +
+    title = "Property") +
   geom_text(aes(
     label = paste("$", formatC(round(usd_mil, digits = 1), format = "d", big.mark = ",", small.mark = ".", width = 2), sep = ""), ymax = 0),
     size = 5, vjust = 0)
 plot_total <- ggplot(economic_by_event_total, aes(x = event, y = usd_mil)) + 
   geom_bar(fill = "white", colour = "darkgreen", stat = "identity") +
   labs(x = "Weather Event", y = "Total Property + Crop Damage (in millions of dollars USD)",
-    title = "Cost of Property and Crop Damage per Weather Event\nin the United States (1950-2011)") +
+    title = "Total") +
   geom_text(aes(
     label = paste("$", formatC(round(usd_mil, digits = 1), format = "d", big.mark = ",", small.mark = ".", width = 2), sep = ""), ymax = 0),
     size = 5, vjust = 0)
 # Make a single plot with all three plots together
 library(gridExtra)
-print(arrangeGrob(plot_crop ,plot_property, plot_total, ncol=3))
+print(arrangeGrob(plot_crop ,plot_property, plot_total, ncol=3, main = "\nCost of Damage per Weather Event in the United States (1950-2011)"))
 ```
 
 ![Alt text](https://raw.githubusercontent.com/atet/coursera/master/RepData_PeerAssessment2/figure/figure3.png)
@@ -564,8 +564,11 @@ print(arrangeGrob(plot_crop ,plot_property, plot_total, ncol=3))
 ## 4. Discussion
 
 **Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?**
+
 Comparing the NOAA weather event dataset to U.S. Census population values, we can see that wind type events caused a larger impact to population health by decade when only considering rain and wind events and decades from 1950-1990. With more current U.S. Census data and more detailed pre-1996 NOAA event data, a more thorough analysis could be performed.
 
 **Across the United States, which types of events have the greatest economic consequences?**
+
+From the NOAA weather event dataset, we see that rain-related weather events have caused more total damage than other events for property and property+crop damages from 1950-2011. For total crop damages during that time, heat-related weather events resulted in the most damage. With more detailed pre-1996 NOAA event data, a more thorough analysis could be performed.
 
 ---

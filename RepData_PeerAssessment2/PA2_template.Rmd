@@ -412,7 +412,7 @@ ggplot(health_by_decade_long, aes(x = decade, y = value, fill = type_var)) +
 
 The total monetary damage of property and crops are plotted across event types in Figure 3.
     
-```{r figure3, fig.width=10, fig.height=5, fig.show="hide", message=FALSE}
+```{r figure3, fig.width=12, fig.height=5, fig.show="hide", message=FALSE}
 
 # Gather information determining the relationship between event type and property/crop damage in millions of dollars
 economic_by_event_crop <- data.frame(
@@ -465,8 +465,11 @@ print(arrangeGrob(plot_crop ,plot_property, plot_total, ncol=3, main = "\nCost o
 ## 4. Discussion
 
 **Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?**
+
 Comparing the NOAA weather event dataset to U.S. Census population values, we can see that wind type events caused a larger impact to population health by decade when only considering rain and wind events and decades from 1950-1990. With more current U.S. Census data and more detailed pre-1996 NOAA event data, a more thorough analysis could be performed.
 
 **Across the United States, which types of events have the greatest economic consequences?**
+
+From the NOAA weather event dataset, we see that rain-related weather events have caused more total damage than other events for property and property+crop damages from 1950-2011. For total crop damages during that time, heat-related weather events resulted in the most damage. With more detailed pre-1996 NOAA event data, a more thorough analysis could be performed.
 
 ---

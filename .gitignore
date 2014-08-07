@@ -1,6 +1,0 @@
-# Ignore stupid mac store files
-.DS_Store
-# AK 20140807: Ignore local repos of Brian Caffos' coursera materials
-/courses
-# AK 20170807: Ain't nobody need to see this
-.gitignore

@@ -1,1 +1,4 @@
+# Ignore stupid mac store files
 .DS_Store
+# AK 20140807: Ignore local repos of Brian Caffos' coursera materials
+/courses

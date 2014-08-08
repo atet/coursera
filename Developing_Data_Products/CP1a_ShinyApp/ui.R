@@ -12,16 +12,16 @@ library(shiny)
 shinyUI(
   pageWithSidebar(
     
-    
+    # User interface of the header panel
     headerPanel(
       title = em("Find the car (from 1974...) that's right for you!")
     ),
     
-    
+    # User interface of the sidebar panel where user input will be entered
     sidebarPanel(
-      strong(em("We will predict the right car for you!")),
-      p("It's soooooo easy for you to use, just answer the following three questions below and the predictions will be displayed on the right side of the page!"),
-      br(),
+      strong(em("In just TWO (2) steps, we will predict the right car for you!")),
+      p("It's soooooo easy to use:"),
+      p(strong("Step 1)"), "Just answer the following three questions below (Your selections will be updated in", strong(em("real time")), "on the right side of the page)."),
       sliderInput(
         inputId = "mpg",
         label = "1. What is your ideal fuel efficiency range (in miles per gallon)?",
@@ -53,19 +53,20 @@ shinyUI(
         )
       ),
       br(),
+      p(strong("Step 2)"), "Press the \"Predict!\" button and the car we predict for you will appear in the right side of the page!"),
       actionButton("goButton", "Predict!")
     ),
     
-    
+    # User interface of the main panel where the predicted results will be displayed
     mainPanel(
       strong("Since you..."),
-      textOutput("output_mpg"),
-      textOutput("output_trans"),
-      textOutput("output_speed"),
+      textOutput("output_mpg"),   # Real time output of the mpg range selected
+      textOutput("output_trans"), # Real time output of the transmission selected
+      textOutput("output_speed"), # Real time output of the speed range selected
       br(),
       strong("We predict that you'd love to drive a..."),
       br(),
-      h2(textOutput("output_car"))
+      h2(textOutput("output_car")) # Output of the prediction will only occur with an initial press of the Predict Go Button
     )
   )
 )

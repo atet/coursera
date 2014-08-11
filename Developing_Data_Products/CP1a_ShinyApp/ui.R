@@ -66,9 +66,10 @@ shinyUI(
       textOutput("output_speed"), # Real time output of the speed range selected
       br(),
       strong("We predict that you'd love to drive a..."),
-      h6("(* Denotes that more than one car that matched your request, therefore a car model was randomly picked for your convenience)"),
       br(),
-      h2(textOutput("output_car")) # Output of the prediction will only occur with an initial press of the Predict Go Button
+      h2(textOutput("output_car")), # Output of the prediction will only occur with an initial press of the Predict Go Button
+      br(),
+      h6("(* Denotes that more than one car that matched your request, therefore a car model was randomly picked for your convenience)")
     )
   )
 )

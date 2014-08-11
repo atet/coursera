@@ -1,4 +1,4 @@
-## AK 20140808
+## AK 20140811
 ## github: atet
 ## NOTE: I am submitting this early, but seeing how this is a public repos, anyone can see it right away.
 ## If you need help, you can use this as a guide to understanding the problem, but please do not just copy/paste this code.
@@ -37,7 +37,7 @@ shinyServer(
     
     # This section will execute the filtering of the mtcars data frame after the first press of the GO button
     output$output_car = renderText({
-      if(input$goButton > 1){ # Initial page load will not show the prediction, only after pressing the Go button
+      if(input$goButton > 0){ # Initial page load will not show the prediction, only after pressing the Go button
         
         predict_car = mtcars
         
@@ -90,9 +90,10 @@ shinyServer(
         # If there are multiple cars, we will random select one
         # If there are no cars that fit the criteria, display that no cars fit the criteria provided by the user.
         if(length(predict_car) > 1){ 
-          predict_car = paste("1974 ", predict_car[sample(length(predict_car), 1)])
+          # If there is more than one result, we will just randomly pick one for you!
+          predict_car = paste("1974 ", predict_car[sample(length(predict_car), 1)], "*", sep = "")
         }else if(length(predict_car) == 1){
-          predict_car = paste("1974 ", predict_car) # If there is more than one result, we will just randomly pick one for you!
+          predict_car = paste("1974 ", predict_car, sep = "")
         }else if(length(predict_car) == 0){
           predict_car = "Nothing matches your unrealistic demands!"
         }

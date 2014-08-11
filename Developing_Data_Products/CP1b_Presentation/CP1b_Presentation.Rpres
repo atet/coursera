@@ -1,30 +1,54 @@
-Developing Data Products
+Let's choose the right car for you!
 ===
-author: A.Kao
-date: 2014.08.11
+author: Developing Data Products: Course Project 1b R Presentation
+date: A.Kao: 2014.08.11
+css: Custom.css
 transition: zoom
 
-Course Project 1b: R Presentation
+Have you ever had trouble finding the right 1974 automobile to suit your tastes and needs?
 ===
 incremental: true
 
-For more details on authoring R presentations click the
-**Help** button on the toolbar.
+- Don't fret, we're here to help!
+- Our sophisticasted prediction algorithm can match you with the right car!
+- All in two easy steps!!!
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+What are these two "easy" steps?
+===
+incremental: true
 
-Slide With Code
+1. Answer a basic questionnaire relating to options you prefer in your dream 1974 car.
+    - Fuel efficiency
+    - Transmission type
+    - Driving style
+2. Press the magic "Predict!" button and wait for our prediction.
+    - Results not shown here
+    - Not responsible for unsatisfied customers
+
+***
+
+![alt text](screenshot.png)
+
+How do we do it?
 ===
 
-```{r}
-summary(cars)
-```
-
-Slide With Plot
-===
+- Our secret formula (shhhh, don't tell anyone!) lies in the Motor Trend magazine's database of fine motorcars.
+    - Extensive listing of thirty-two (32) cars from 1974
+    - Over ten (10) meticulously curated details for each car
+- Here's a sample of this comprehensive database:
 
 ```{r, echo=FALSE}
-plot(cars)
+head(mtcars[,1:5], n = 7)
 ```
+
+Your mileage (pun intended!) may vary!!!
+===
+incremental: true
+
+- Reports of satisfied customers include:
+    - Bob Bobson: "Awesome!"
+    - Len Lenderson: "It's okay I guess."
+    - Anonymous: "Why did I buy this old car???" ![alt text](car.jpg)
+    - Hodor: "HODOR!!!"
+- Have fun and good luck using our prediction software, [link to our car prediction software hosted on ShinyApps.io](http://atet.shinyapps.io/CP1a_ShinyApp/)
+- *We are not responsible for unsatisfied customers*.

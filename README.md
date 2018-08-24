@@ -1,4 +1,4 @@
 coursera
 ========
 
-Atet's Coursera Data Science Public Repository
+Public Repository for my Coursera Data Science Specialization courses.
